@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Start · Урок 2 — Переменные и ввод данных</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+color-scheme:light;
+--ink:#1c1940; --ink-2:#4d4a72; --ink-3:#8a87a8;
+--card:#ffffff; --card-2:#f5f2ff; --line:#e7e2fb;
+--violet:#7b5cff; --violet-d:#5a3be0; --pink:#ff6fb0; --peach:#ffb48c; --sky:#5fc3ff; --mint:#3fd7a6; --sun:#ffcf4a; --orange:#ff8a3d;
+--ok:#10b47f; --ok-bg:#e6fbf3; --bad:#ef3d6b; --bad-bg:#ffedf2;
+--code-bg:#0f0d26; --code-fg:#ecebff; --code-line:#1f1c44;
+--bar:#232546; --bar-2:#33365e;
+--f-display:"Nunito",system-ui,sans-serif;
+--f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+--f-code:"JetBrains Mono",ui-monospace,Consolas,monospace;
+--clay:0 1px 0 rgba(255,255,255,.95) inset,0 -5px 12px rgba(91,66,190,.07) inset,0 16px 34px -14px rgba(64,40,150,.30),0 3px 8px rgba(64,40,150,.06);
+--clay-sm:0 1px 0 rgba(255,255,255,.9) inset,0 -3px 8px rgba(91,66,190,.08) inset,0 8px 18px -10px rgba(64,40,150,.32);
+--r-xl:36px; --r-lg:26px; --r-md:18px; --r-sm:12px;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:#efeaff;color:var(--ink);font-family:var(--f-body);font-weight:600;-webkit-font-smoothing:antialiased;overflow:hidden}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,textarea:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
+#bg{position:fixed;inset:0;z-index:0;transition:background .6s ease;background:var(--bgimg)}
+#bg::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.55) 1.2px,transparent 1.3px);background-size:26px 26px;opacity:.45;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
+.blob.b1{width:42vw;height:42vw;left:-10vw;top:-12vw;background:var(--b1)}
+.blob.b2{width:36vw;height:36vw;right:-8vw;bottom:-10vw;background:var(--b2);animation-delay:-6s}
+.blob.b3{width:26vw;height:26vw;right:22vw;top:-8vw;background:var(--b3);animation-delay:-11s}
+@keyframes drift{to{transform:translate(4vw,3vw) scale(1.08)}}
+body[data-bg="0"]{--bgimg:linear-gradient(135deg,#efe4ff 0%,#ffe1ef 45%,#ffe9d9 100%);--b1:#b9a2ff;--b2:#ffb3cf;--b3:#ffd2b3}
+body[data-bg="1"]{--bgimg:linear-gradient(135deg,#dff3ff 0%,#e6e4ff 50%,#ffe4f1 100%);--b1:#8fd4ff;--b2:#c3b3ff;--b3:#ffc2dc}
+body[data-bg="2"]{--bgimg:linear-gradient(135deg,#d9fbef 0%,#dff1ff 55%,#efe6ff 100%);--b1:#8ff0cb;--b2:#9fd6ff;--b3:#d1c2ff}
+body[data-bg="3"]{--bgimg:linear-gradient(135deg,#fff0dd 0%,#ffe3ea 50%,#efe3ff 100%);--b1:#ffcf9f;--b2:#ffb1c6;--b3:#cdb6ff}
+body[data-bg="4"]{--bgimg:linear-gradient(135deg,#e9e3ff 0%,#dcf4ff 50%,#dbfbf0 100%);--b1:#b4a4ff;--b2:#8fe3ff;--b3:#93f2cf}
+body[data-bg="lab"]{--bgimg:linear-gradient(135deg,#2b1060 0%,#4a1470 50%,#1d1650 100%);--b1:#8a3dff;--b2:#ff4fa8;--b3:#4a6bff}
+body[data-bg="night"]{--bgimg:linear-gradient(135deg,#141a4a 0%,#2a1f6e 55%,#0f2b5c 100%);--b1:#5a4dff;--b2:#22c7ff;--b3:#ff5fb0}
+#app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;padding:10px 16px 8px}
+#stage{flex:1;min-height:0;display:flex;justify-content:center}
+.slide{position:relative;width:100%;max-width:1760px;height:100%;overflow-y:auto;overflow-x:hidden;background:rgba(255,255,255,.80);backdrop-filter:blur(14px);border-radius:var(--r-xl);box-shadow:var(--clay);padding:20px clamp(18px,2.6vw,44px) 24px;scrollbar-width:thin}
+.slide.anim{animation:slideIn .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes slideIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.slide.dark{background:rgba(18,15,46,.86);color:#eeeaff;--ink:#f3f0ff;--ink-2:#c3bfe6;--ink-3:#8f8bb8;--card:#1c1940;--card-2:#26224f;--line:#35306a}
+.sl-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;font:800 13px/1 var(--f-display);letter-spacing:.04em;background:var(--card-2);color:var(--ink-2)}
+.chip.num{background:linear-gradient(135deg,#6f63ff,#a64dff);color:#fff;box-shadow:0 6px 14px -6px rgba(111,99,255,.8)}
+.sl-head .sp{flex:1}
+.chip.badge{background:#fff4d0;color:#8a5a00;border:1.5px solid #ffe08a}
+.dark .chip.badge{background:rgba(255,207,74,.12);color:#ffd76b;border-color:rgba(255,207,74,.35)}
+h1.t{font:900 clamp(28px,3.5vw,50px)/1.08 var(--f-display);letter-spacing:-.02em;margin:0 0 12px;color:var(--ink)}
+h1.t code{font-family:var(--f-code);font-weight:800;font-size:.86em;background:#e9e6f5;color:var(--ink);border-radius:.25em;padding:.02em .22em}
+p.lead{font-size:clamp(16px,1.45vw,21px);line-height:1.55;color:var(--ink-2);margin:0 0 22px;max-width:70ch;font-weight:700}
+.body{display:flex;flex-direction:column;gap:20px}
+.emj{display:block;line-height:1;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 10px 10px rgba(60,40,140,.22));text-align:center}
+.float{animation:bob 4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(-3deg)}}
+.island{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--clay);padding:20px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.icon-bub{width:68px;height:68px;border-radius:22px;display:grid;place-items:center;background:var(--tint,#efeaff);box-shadow:var(--clay-sm);flex:none}
+.icon-bub .emj{font-size:42px}
+.card-t{font:800 19px/1.2 var(--f-display);margin:12px 0 6px;color:var(--ink);overflow-wrap:anywhere}
+.card-d{font-size:15.5px;line-height:1.5;color:var(--ink-2);margin:0}
+.lift{transition:transform .25s ease}
+.lift:hover{transform:translateY(-6px)}
+.t-violet{--tint:#ece6ff}.t-pink{--tint:#ffe3f0}.t-peach{--tint:#ffeadd}.t-sky{--tint:#dff3ff}.t-mint{--tint:#dcfaef}.t-sun{--tint:#fff4cf}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 26px;border-radius:20px;font:800 18px/1 var(--f-display);color:#fff;background:linear-gradient(135deg,#14c98e,#0fb3b0);box-shadow:0 6px 0 #08876f,0 16px 26px -10px rgba(16,180,127,.7);transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #08876f}
+.btn.orange{background:linear-gradient(135deg,#ffa31a,#ff6a2b);box-shadow:0 6px 0 #c4470f,0 16px 26px -10px rgba(255,106,43,.7)}
+.btn.violet{background:linear-gradient(135deg,#7b5cff,#b14dff);box-shadow:0 6px 0 #4e2fc4,0 16px 26px -10px rgba(123,92,255,.7)}
+.btn.ghost{background:var(--card-2);color:var(--ink);box-shadow:0 5px 0 var(--line)}
+.btn.sm{padding:11px 16px;font-size:15px;border-radius:15px}
+.btn.icon{padding:13px 15px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.code{background:var(--code-bg);color:var(--code-fg);border-radius:var(--r-lg);box-shadow:0 18px 36px -18px rgba(15,13,38,.8);overflow:hidden;min-width:0}
+.code-top{display:flex;align-items:center;gap:8px;padding:13px 18px;border-bottom:1px solid var(--code-line)}
+.dots{display:flex;gap:7px}.dots i{width:12px;height:12px;border-radius:50%;background:#ff4f6d}.dots i:nth-child(2){background:#ffb020}.dots i:nth-child(3){background:#1ed39a}
+.code-top .fn{margin-left:auto;font:600 13px var(--f-code);color:#a6a2d6}
+.code pre{margin:0;padding:18px 20px;font:600 clamp(14px,1.25vw,18px)/1.7 var(--f-code);overflow-x:auto;white-space:pre}
+.code pre .ln{display:block;border-radius:8px;padding:0 8px;margin:0 -8px;transition:background .2s}
+.k-fn{color:#6fd3ff}.k-str{color:#9df07a}.k-num{color:#ffb35c}.k-kw{color:#c792ff}.k-com{color:#7a77a6;font-style:italic}.k-op{color:#ff8fc2}
+.term{background:#070617;color:#4bf0a6;border-radius:var(--r-md);font:700 clamp(15px,1.3vw,19px)/1.6 var(--f-code);padding:16px 18px;min-height:64px;white-space:pre-wrap;word-break:break-word}
+.term .p{color:#6c6995;margin-right:10px}
+.term .err{color:#ff6b8f}
+.term .hint{color:#ffd76b;font-family:var(--f-body);font-weight:700;font-size:.92em;display:block;margin-top:6px}
+.term .muted{color:#6c6995}
+.fld{display:flex;flex-direction:column;gap:5px;margin:8px 0;font:800 14px var(--f-display);color:var(--ink-2)}
+.fld input{font:700 16px var(--f-body);padding:10px 14px;border-radius:14px;border:2px solid var(--line);background:#fff;color:var(--ink);outline:none}
+.dark .fld input{background:#161335;border-color:#35306a;color:#eeeaff}
+.fld input:focus{border-color:var(--violet)}
+.seg{display:inline-flex;background:var(--card-2);border-radius:14px;padding:4px;gap:4px;align-self:flex-start}
+.seg button{padding:9px 14px;border-radius:11px;font:800 14px var(--f-display);color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--violet);color:#fff;box-shadow:0 3px 8px -2px rgba(123,92,255,.6)}
+#bar{position:relative;z-index:5;margin:8px auto 0;width:100%;max-width:1760px;display:flex;align-items:center;gap:6px;background:var(--bar);color:#dcdaf5;border-radius:24px;padding:9px 12px;box-shadow:0 18px 30px -14px rgba(20,18,60,.6)}
+#bar .bb{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;font:800 14px var(--f-display);color:#dcdaf5}
+#bar .bb:hover{background:var(--bar-2)}
+#bar svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#bar .mid{flex:1;display:flex;align-items:center;justify-content:center;gap:14px}
+#bar .nav{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--bar-2)}
+#bar .nav.next{background:linear-gradient(135deg,#ff4fb2,#a64dff);color:#fff;box-shadow:0 6px 16px -6px rgba(255,79,178,.8)}
+#bar .cnt{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:84px;font:800 17px var(--f-code);color:#fff}
+#bar .cnt small{color:#8d8ab6;font-weight:600;margin:0 4px}
+#bar .prog{width:84px;height:5px;border-radius:5px;background:#3b3e68;overflow:hidden}
+#bar .prog i{display:block;height:100%;background:linear-gradient(90deg,#ff4fb2,#a64dff);transition:width .3s}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(22,18,60,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px}
+.ov-card{background:#fff;color:#1c1940;border-radius:30px;box-shadow:var(--clay);width:100%;max-width:1100px;max-height:100%;display:flex;flex-direction:column;overflow:hidden}
+.ov-head{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid #eee9ff}
+.ov-head h2{margin:0;font:900 22px var(--f-display);flex:1}
+.ov-body{overflow:auto;padding:20px 22px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.thumb{text-align:left;background:#f6f3ff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px;box-shadow:0 1px 0 #fff inset,0 6px 14px -10px rgba(64,40,150,.4);transition:transform .15s}
+.thumb:hover{transform:translateY(-3px);background:#efeaff}
+.thumb.cur{box-shadow:inset 0 0 0 2.5px #7b5cff}
+.thumb b{font:800 12px var(--f-code);color:#7b5cff}
+.thumb span{font:800 14.5px/1.25 var(--f-display);color:#1c1940}
+.thumb em{font-style:normal;font-size:12px;color:#8a87a8}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:30;background:#1c1940;color:#fff;padding:12px 18px;border-radius:14px;font:800 15px var(--f-display);box-shadow:0 12px 24px -10px rgba(0,0,0,.5)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+.tc{position:relative;width:100%;max-width:100%;border-radius:22px;overflow:hidden;box-shadow:var(--clay-sm),0 0 0 1px #e9e4ff;background:#fbfaff}
+.tc canvas{display:block}
+.tc-badge{position:absolute;right:10px;bottom:10px;background:rgba(255,255,255,.92);color:#3a375e;font:700 12px var(--f-code);padding:5px 9px;border-radius:9px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.cover{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.cover h1.t{font-size:clamp(32px,4.6vw,64px);max-width:22ch}
+.cover-art{position:relative;width:min(560px,100%);aspect-ratio:16/9}
+.cover-art .ped{position:absolute;left:50%;bottom:2%;width:46%;height:20%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 50% 30%,#fff 0%,#ece6ff 60%,#d6ccff 100%);box-shadow:0 18px 30px -12px rgba(80,50,180,.45)}
+.cover-art .hero{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);font-size:clamp(90px,16vw,170px)}
+.cover-art .fl{position:absolute;font-size:clamp(34px,5vw,60px)}
+.loader{position:relative;width:min(520px,100%);height:54px;border-radius:999px;background:#fff;box-shadow:var(--clay);overflow:hidden;border:3px solid #ffe39a}
+.loader i{position:absolute;inset:4px auto 4px 4px;border-radius:999px;background:linear-gradient(90deg,#ffd23f,#ffb01f);box-shadow:0 2px 0 rgba(255,255,255,.7) inset;width:calc(var(--p,0%) - 8px);min-width:40px;transition:width .2s}
+.loader span{position:relative;z-index:1;display:grid;place-items:center;height:100%;font:800 16px var(--f-display);color:#6a4300}
+.sec{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:30px;align-items:center;min-height:min(62vh,560px)}
+.sec h1.t{font-size:clamp(36px,5.2vw,74px)}
+.sec .art{position:relative;display:grid;place-items:center;min-height:280px}
+.sec .art .emj.big{font-size:clamp(140px,26vh,240px)}
+.eyebrow{font:800 clamp(22px,2.6vw,34px) var(--f-code);color:#2f6bff;margin-bottom:6px}
+.fact{display:flex;gap:14px;align-items:center;margin-top:18px;background:#fff8dc;border-radius:20px;padding:14px 18px;box-shadow:var(--clay-sm);color:#6a4a00;font-size:16px;line-height:1.45}
+.dark .fact{background:rgba(255,207,74,.12);color:#ffd76b}
+.map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;position:relative}
+.map::before{content:"";position:absolute;left:12%;right:12%;top:62px;border-top:4px dashed #c8bcff;z-index:0}
+.mission{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.mission .n{font:900 14px var(--f-display);color:#fff;background:var(--violet);border-radius:999px;padding:6px 12px}
+.mission .card-t{margin:0}
+.bigq{display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px;padding:10px 0 20px}
+.bigq h1.t{font-size:clamp(30px,4.2vw,58px);max-width:20ch}
+.bigq .arts{display:flex;gap:30px;justify-content:center;align-items:center}
+.yn{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.reply{max-width:760px;border-radius:24px;padding:18px 22px;font-size:18px;line-height:1.5;text-align:left;display:flex;gap:16px;align-items:center;box-shadow:var(--clay);background:#fff;color:#1c1940}
+.reply.ok{background:var(--ok-bg)}
+.reply.no{background:#fff4e3}
+.reveal>*{animation:rise .5s both}
+@keyframes rise{from{transform:translateY(12px);opacity:0}}
+.def{font:900 clamp(28px,3.4vw,46px)/1.15 var(--f-display);margin:0;color:var(--ink)}
+.def em{font-style:normal;background:linear-gradient(transparent 60%,#ffe27a 60%)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+.places{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.places .btn.pick-bad{background:linear-gradient(135deg,#ff6f9b,#ff4f6d);box-shadow:0 7px 0 #c32a4c}
+.platform{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:22px;min-height:min(66vh,620px)}
+.platform .arts{display:flex;align-items:flex-end;gap:26px}
+.platform h1.t{font-size:clamp(34px,4.8vw,68px);max-width:20ch;margin:0}
+.platform .no{display:inline-block;background:linear-gradient(135deg,#ffa31a,#ff6a2b);color:#fff;border-radius:.3em;padding:0 .25em}
+.platform p.lead{margin:0;text-align:center}
+.flip{perspective:1000px;min-height:280px;text-align:left}
+.flip .in{position:relative;height:100%;min-height:280px;transition:transform .6s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r-lg);box-shadow:var(--clay);padding:22px;display:flex;flex-direction:column}
+.flip .f{background:var(--card);align-items:center;justify-content:center;text-align:center;gap:10px}
+.flip .b{background:linear-gradient(150deg,#7b5cff,#b04dff);color:#fff;transform:rotateY(180deg);justify-content:center;gap:10px}
+.flip .b .card-t{color:#fff;margin:0}
+.flip .b p{margin:0;line-height:1.5;font-size:16px}
+.flip .hintx{font-size:13px;color:var(--ink-3);font-weight:800}
+.anat{display:flex;flex-direction:column;gap:18px;align-items:center}
+.anat .code{width:min(900px,100%)}
+.anat pre.huge{font-size:clamp(30px,5vw,72px);line-height:1.25;text-align:center;padding:26px 20px}
+.part{border-radius:14px;padding:0 4px;cursor:pointer;transition:background .2s,box-shadow .2s}
+.part.on{background:rgba(255,255,255,.14);box-shadow:0 0 0 3px var(--pc)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;width:100%}
+.bub{border-radius:20px;padding:14px 16px;background:var(--card);box-shadow:var(--clay-sm);border:3px solid transparent;text-align:left;font-size:15.5px;line-height:1.4;color:var(--ink-2);transition:transform .2s,border-color .2s}
+.bub b{display:block;font:900 17px var(--f-code);margin-bottom:4px;color:var(--pc)}
+.bub.on{border-color:var(--pc);transform:translateY(-5px)}
+.cheat{width:100%;border-collapse:collapse;font-size:15px}
+.cheat td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.cheat td:first-child{white-space:nowrap}
+.cheat code{font-family:var(--f-code);font-weight:700;background:var(--card-2);border-radius:10px;padding:4px 10px;color:var(--violet-d)}
+.dark .cheat code{background:#26224f;color:#c9bfff}
+.praise{margin:0;border-radius:14px;padding:12px 16px;background:rgba(30,211,154,.12);border:1px solid rgba(30,211,154,.35);color:#0b8a63;font-weight:700;font-size:15px}
+.dark .praise{color:#9ff5cf}
+@media (max-width:900px){
+.g3,.map,.bubbles,.split{grid-template-columns:minmax(0,1fr)}
+.map::before{display:none}
+.sec{grid-template-columns:minmax(0,1fr)}
+#bar .lbl{display:none}
+.slide{padding:18px 14px 26px;border-radius:26px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div id="app">
+<main id="stage"><section id="slide" class="slide" aria-live="polite"></section></main>
+<nav id="bar" aria-label="Управление презентацией">
+<button class="bb" id="bRestart" title="В начало"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+<button class="bb" id="bGrid" title="Все слайды"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="lbl">Слайды</span></button>
+<div class="mid">
+<button class="nav" id="bPrev" title="Назад"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+<div class="cnt"><div><span id="cN">1</span><small>/</small><span id="cT">28</span></div><div class="prog"><i id="cP"></i></div></div>
+<button class="nav next" id="bNext" title="Далее"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+<button class="bb" id="bFull" title="Во весь экран"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</nav>
+</div>
+<div id="ovGrid" class="ov" hidden><div class="ov-card"><div class="ov-head"><h2>Все слайды урока</h2><button class="btn ghost sm" data-close>Закрыть</button></div><div class="ov-body"><div class="thumbs" id="thumbs"></div></div></div></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ===== Мини-Python: print(), input(), числа, строки, for-range, turtle (+penup/pendown/заливка) ===== */
+const PY = (() => {
+class PyErr extends Error { constructor(type, msg, hint, line){ super(msg); this.type = type; this.hint = hint || ''; this.line = line; } }
+const I = v => ({ t:'int', v }), F = v => ({ t:'float', v }), S = v => ({ t:'str', v }), L = v => ({ t:'list', v });
+const isNum = x => x.t === 'int' || x.t === 'float';
+const TYPE = x => ({ int:'int', float:'float', str:'str', list:'list', range:'range' })[x.t];
+const TURTLE = {
+forward:'fd', fd:'fd', backward:'bk', back:'bk', bk:'bk', left:'lt', lt:'lt', right:'rt', rt:'rt',
+color:'color', pencolor:'color', width:'width', pensize:'width', penup:'up', pu:'up', up:'up',
+pendown:'down', pd:'down', down:'down', goto:'goto', setpos:'goto', setposition:'goto', home:'home',
+setheading:'seth', seth:'seth', circle:'circle', speed:'speed', shape:'noop', exitonclick:'noop',
+done:'noop', mainloop:'noop', hideturtle:'hide', ht:'hide', showturtle:'show', st:'show',
+bgcolor:'noop', begin_fill:'begin', end_fill:'end', fillcolor:'fillcolor', Screen:'noop'
+};
+const ARGNAME = { fd:'distance', bk:'distance', lt:'angle', rt:'angle', seth:'to_angle', width:'width', circle:'radius', speed:'speed' };
+const BUILTIN = ['print','range','len','str','int','abs','round','input'];
+const ALLNAMES = BUILTIN.concat(Object.keys(TURTLE));
+function fmtFloat(v){ if(!isFinite(v)) return v>0?'inf':v<0?'-inf':'nan'; if(Number.isInteger(v)&&Math.abs(v)<1e16) return v.toFixed(1); return String(v); }
+function toStr(x){ if(x.t==='int')return String(x.v); if(x.t==='float')return fmtFloat(x.v); if(x.t==='str')return x.v; if(x.t==='list')return '['+x.v.map(repr).join(', ')+']'; if(x.t==='range')return 'range(...)'; return '?'; }
+function repr(x){ return x.t==='str' ? "'"+x.v+"'" : toStr(x); }
+function tokenize(s, line){
+const toks=[]; let i=0;
+while(i<s.length){
+const c=s[i];
+if(c===' '||c==='\t'){i++;continue;}
+if(c==='#')break;
+if(/[0-9]/.test(c)||(c==='.'&&/[0-9]/.test(s[i+1]||''))){
+let j=i; while(j<s.length&&/[0-9_]/.test(s[j]))j++;
+let f=false;
+if(s[j]==='.'){f=true;j++;while(j<s.length&&/[0-9]/.test(s[j]))j++;}
+if(/[A-Za-zА-Яа-яЁё_]/.test(s[j]||''))throw new PyErr('SyntaxError','invalid decimal literal','Число и буквы склеились. Поставь между ними пробел или знак действия.',line);
+toks.push({k:'num',v:Number(s.slice(i,j).replace(/_/g,'')),f}); i=j; continue;
+}
+if(c==="'"||c==='"'){
+let j=i+1,out='';
+while(j<s.length&&s[j]!==c){
+if(s[j]==='\\'&&j+1<s.length){const n=s[j+1];out+=n==='n'?'\n':n==='t'?'\t':n;j+=2;continue;}
+out+=s[j];j++;
+}
+if(j>=s.length){
+const other=c==="'"?'"':"'";
+const hint=s.slice(i+1).includes(other)?'Кавычки должны быть одинаковыми: открыл '+c+' — закрой тоже '+c+'.':'Кавычка открыта, но не закрыта. Поставь такую же кавычку в конце текста.';
+throw new PyErr('SyntaxError','unterminated string literal',hint,line);
+}
+toks.push({k:'str',v:out}); i=j+1; continue;
+}
+if(/[A-Za-zА-Яа-яЁё_]/.test(c)){
+let j=i; while(j<s.length&&/[A-Za-z0-9А-Яа-яЁё_]/.test(s[j]))j++;
+toks.push({k:'name',v:s.slice(i,j)}); i=j; continue;
+}
+const two=s.slice(i,i+2);
+if(['**','//','==','!=','<=','>='].includes(two)){toks.push({k:'op',v:two});i+=2;continue;}
+if('+-*/%()[],=:.<>'.includes(c)){toks.push({k:'op',v:c});i++;continue;}
+if('«»“”„‘’'.includes(c))throw new PyErr('SyntaxError',`invalid character '${c}'`,"Используй обычные кавычки ' или \" — не «ёлочки» и не «лапки».",line);
+if('（）'.includes(c))throw new PyErr('SyntaxError',`invalid character '${c}'`,'Скобка набрана не той раскладкой. Используй обычные ( и ).',line);
+throw new PyErr('SyntaxError',`invalid character '${c}'`,'В коде есть символ, который Python не понимает.',line);
+}
+return toks;
+}
+function arith(op,a,b,line){
+const bothInt=a.t==='int'&&b.t==='int';
+if(op==='+'){
+if(isNum(a)&&isNum(b))return bothInt?I(a.v+b.v):F(a.v+b.v);
+if(a.t==='str'&&b.t==='str')return S(a.v+b.v);
+if(a.t==='list'&&b.t==='list')return L(a.v.concat(b.v));
+if(a.t==='str')throw new PyErr('TypeError',`can only concatenate str (not "${TYPE(b)}") to str`,"Нельзя склеить текст и число. Возьми число в кавычки ('10') или раздели запятой: print('Мне', 10)",line);
+throw new PyErr('TypeError',`unsupported operand type(s) for +: '${TYPE(a)}' and '${TYPE(b)}'`,'Число и текст нельзя сложить. Сделай оба значения текстом или оба числами.',line);
+}
+if(op==='*'){
+if(isNum(a)&&isNum(b))return bothInt?I(a.v*b.v):F(a.v*b.v);
+const seq=a.t==='str'||a.t==='list'?a:b.t==='str'||b.t==='list'?b:null;
+const n=seq===a?b:a;
+if(seq&&n.t==='int'){const k=Math.max(0,n.v);if(k*(seq.v.length||1)>100000)throw new PyErr('MemoryError','слишком длинная строка','Попробуй число поменьше.',line);return seq.t==='str'?S(seq.v.repeat(k)):L([].concat(...Array(k).fill(seq.v)));}
+if(seq)throw new PyErr('TypeError',`can't multiply sequence by non-int of type '${TYPE(n)}'`,"Текст можно умножать только на целое число: 'Мяу' * 3",line);
+}
+if(!(isNum(a)&&isNum(b)))throw new PyErr('TypeError',`unsupported operand type(s) for ${op}: '${TYPE(a)}' and '${TYPE(b)}'`,'Это действие работает только с числами. Числа пишутся без кавычек.',line);
+if(op==='-')return bothInt?I(a.v-b.v):F(a.v-b.v);
+if((op==='/'||op==='//'||op==='%')&&b.v===0)throw new PyErr('ZeroDivisionError','division by zero','На ноль делить нельзя — даже компьютеру!',line);
+if(op==='/')return F(a.v/b.v);
+if(op==='//')return bothInt?I(Math.floor(a.v/b.v)):F(Math.floor(a.v/b.v));
+if(op==='%'){const r=((a.v%b.v)+b.v)%b.v;return bothInt?I(r):F(r);}
+if(op==='**'){const r=Math.pow(a.v,b.v);return bothInt&&b.v>=0?I(r):F(r);}
+throw new PyErr('SyntaxError','invalid syntax','',line);
+}
+function parser(toks,ctx,line){
+let p=0;
+const peek=()=>toks[p],next=()=>toks[p++];
+const isOp=v=>toks[p]&&toks[p].k==='op'&&toks[p].v===v;
+function expect(v,hint){
+if(isOp(v)){p++;return;}
+if(!toks[p]&&v===')')throw new PyErr('SyntaxError'," '(' was never closed",'Скобка открыта, но не закрыта. Поставь ) в конце.',line);
+if(!toks[p]&&v===']')throw new PyErr('SyntaxError',"'[' was never closed",'Квадратная скобка не закрыта. Поставь ] в конце.',line);
+throw new PyErr('SyntaxError','invalid syntax',hint||'Похоже, пропущена запятая или знак действия.',line);
+}
+function expr(){return add();}
+function add(){let a=term();while(isOp('+')||isOp('-')){const op=next().v;a=arith(op,a,term(),line);}return a;}
+function term(){let a=unary();while(isOp('*')||isOp('/')||isOp('//')||isOp('%')){const op=next().v;a=arith(op,a,unary(),line);}return a;}
+function unary(){
+if(isOp('-')){next();const v=unary();if(!isNum(v))throw new PyErr('TypeError',`bad operand type for unary -: '${TYPE(v)}'`,'Минус ставится только перед числом.',line);return v.t==='int'?I(-v.v):F(-v.v);}
+if(isOp('+')){next();return unary();}
+return power();
+}
+function power(){const a=postfix();if(isOp('**')){next();return arith('**',a,unary(),line);}return a;}
+function postfix(){
+let a=atom();
+while(isOp('[')){next();const ix=expr();expect(']');
+if(!(a.t==='list'||a.t==='str'))throw new PyErr('TypeError',`'${TYPE(a)}' object is not subscriptable`,'',line);
+if(ix.t!=='int')throw new PyErr('TypeError','indices must be integers','Номер элемента — целое число.',line);
+let k=ix.v<0?a.v.length+ix.v:ix.v;
+if(k<0||k>=a.v.length)throw new PyErr('IndexError','index out of range','Такого номера в списке нет. Нумерация начинается с 0!',line);
+a=a.t==='str'?S([...a.v][k]):a.v[k];
+}
+return a;
+}
+function callArgs(){
+expect('(');
+const args=[];
+if(!isOp(')')){args.push(expr());while(isOp(',')){next();if(isOp(')'))break;args.push(expr());}}
+expect(')','Похоже, между значениями пропущена запятая.');
+return args;
+}
+function atom(){
+const t=next();
+if(!t)throw new PyErr('SyntaxError','invalid syntax','Выражение оборвалось — чего-то не хватает.',line);
+if(t.k==='num')return t.f?F(t.v):I(t.v);
+if(t.k==='str')return S(t.v);
+if(t.k==='op'&&t.v==='('){const v=expr();expect(')');return v;}
+if(t.k==='op'&&t.v==='['){
+const items=[];
+if(!isOp(']')){items.push(expr());while(isOp(',')){next();if(isOp(']'))break;items.push(expr());}}
+expect(']');return L(items);
+}
+if(t.k==='name'){
+if(isOp('(')){const args=callArgs();return callExpr(t.v,args,ctx,line);}
+if(Object.prototype.hasOwnProperty.call(ctx.env,t.v))return ctx.env[t.v];
+if(t.v==='True')return I(1); if(t.v==='False')return I(0);
+throw nameErr(t.v,ctx,line,true);
+}
+throw new PyErr('SyntaxError','invalid syntax','Здесь стоит лишний знак.',line);
+}
+return { expr, peek, next, isOp, expect, callArgs, done:()=>p>=toks.length, rest:()=>toks.slice(p) };
+}
+function nameErr(name,ctx,line,inExpr){
+const low=name.toLowerCase();
+let hint;
+if(name!==low&&ALLNAMES.includes(low))hint=`Python различает заглавные и строчные буквы! Пиши ${low} с маленькой буквы.`;
+else if(TURTLE[name]&&!ctx.turtle)hint='Сначала подключи черепашку: from turtle import *';
+else if(inExpr)hint=`Если «${name}» — это текст, возьми его в кавычки: '${name}'`;
+else hint='Python не знает такой команды. Проверь, нет ли опечатки.';
+return new PyErr('NameError',`name '${name}' is not defined`,hint,line);
+}
+function callExpr(name,args,ctx,line){
+if(name==='range'){
+const n=args.map(a=>{if(a.t!=='int')throw new PyErr('TypeError','range() needs integers','В range() пишут целые числа: range(4)',line);return a.v;});
+let[a,b,c]=n.length===1?[0,n[0],1]:n.length===2?[n[0],n[1],1]:n;
+if(!c)throw new PyErr('ValueError','range() arg 3 must not be zero','',line);
+const out=[];for(let i=a;c>0?i<b:i>b;i+=c){out.push(i);if(out.length>100000)break;}
+return {t:'range',v:out};
+}
+if(name==='len'){const a=args[0];if(!a||!(a.t==='str'||a.t==='list'))throw new PyErr('TypeError','len() needs str or list','',line);return I([...a.v].length);}
+if(name==='str')return S(args[0]?toStr(args[0]):'');
+if(name==='int'){
+const a=args[0];if(!a)return I(0);
+if(isNum(a))return I(Math.trunc(a.v));
+if(a.t==='str'&&/^\s*[-+]?\d+\s*$/.test(a.v))return I(parseInt(a.v,10));
+throw new PyErr('ValueError',`invalid literal for int(): '${a.v}'`,'Это не похоже на целое число.',line);
+}
+if(name==='abs'){const a=args[0];return a.t==='int'?I(Math.abs(a.v)):F(Math.abs(a.v));}
+if(name==='round'){const a=args[0];return I(Math.round(a.v));}
+if(name==='input'){
+const pr=args.length?toStr(args[0]):'';
+if(pr)ctx.out.push({t:'out',v:pr});
+const v=ctx.inp.length?String(ctx.inp.shift()):'';
+return S(v);
+}
+if(name==='print'||TURTLE[name])throw new PyErr('SyntaxError','invalid syntax',`${name}() — это команда. Пиши её в отдельной строке.`,line);
+throw nameErr(name,ctx,line,false);
+}
+function num(a,cmd,line){
+if(!a)throw new PyErr('TypeError',`${cmd}() missing 1 required positional argument: '${ARGNAME[TURTLE[cmd]]||'x'}'`,`Внутри скобок нужно число: ${cmd}(90)`,line);
+if(!isNum(a))throw new PyErr('TypeError',`${cmd}() argument must be a number, not '${TYPE(a)}'`,'Число пишется без кавычек: forward(150), а не forward(\'150\').',line);
+return a.v;
+}
+function validColor(c){ if(typeof CSS!=='undefined'&&CSS.supports)return CSS.supports('color',c); return /^[a-z]+$|^#[0-9a-f]{3,8}$/i.test(c); }
+function callStmt(name,args,ctx,line){
+if(name==='print'){ctx.out.push({t:'out',v:args.map(toStr).join(' ')});return;}
+const op=TURTLE[name];
+if(op){
+if(!ctx.turtle)throw nameErr(name,ctx,line,false);
+const C=ctx.cmds;
+switch(op){
+case 'fd': C.push({op:'fd',v:num(args[0],name,line),line}); break;
+case 'bk': C.push({op:'fd',v:-num(args[0],name,line),line}); break;
+case 'lt': C.push({op:'turn',v:num(args[0],name,line),line}); break;
+case 'rt': C.push({op:'turn',v:-num(args[0],name,line),line}); break;
+case 'seth': C.push({op:'seth',v:num(args[0],name,line),line}); break;
+case 'width': C.push({op:'width',v:num(args[0],name,line),line}); break;
+case 'speed': { const a=args[0]; let v=3; if(a&&isNum(a))v=a.v; else if(a&&a.t==='str')v=({fastest:0,fast:10,normal:6,slow:3,slowest:1})[a.v]??3; C.push({op:'speed',v,line}); break; }
+case 'up': C.push({op:'up',line}); break;
+case 'down': C.push({op:'down',line}); break;
+case 'hide': C.push({op:'hide',line}); break;
+case 'show': C.push({op:'show',line}); break;
+case 'begin': C.push({op:'begin',line}); break;
+case 'end': C.push({op:'end',line}); break;
+case 'home': C.push({op:'goto',x:0,y:0,line},{op:'seth',v:0,line}); break;
+case 'goto': {
+let x,y;
+if(args.length===1&&args[0].t==='list'){x=args[0].v[0];y=args[0].v[1];}else{x=args[0];y=args[1];}
+if(!x||!y)throw new PyErr('TypeError','goto() missing argument','Нужны две координаты: goto(100, 50)',line);
+C.push({op:'goto',x:num(x,name,line),y:num(y,name,line),line}); break;
+}
+case 'fillcolor': case 'color': {
+const a=args[0];
+if(!a)break;
+if(a.t!=='str')throw new PyErr('TurtleGraphicsError',`bad color string: ${toStr(a)}`,"Цвет пишется в кавычках: color('red')",line);
+if(!validColor(a.v))throw new PyErr('TurtleGraphicsError',`bad color string: ${a.v}`,"Черепашка не знает такого цвета. Попробуй 'red', 'blue', 'green', 'black', 'orange', 'purple', 'yellow'.",line);
+C.push({op:op==='color'?'color':'fillcolor',v:a.v,line}); break;
+}
+case 'circle': {
+const r=num(args[0],name,line);
+const ext=args[1]?num(args[1],name,line):360;
+const frac=Math.abs(ext)/360;
+const steps=1+Math.floor(Math.min(11+Math.abs(r)/6,59)*frac);
+let w=ext/steps,w2=w/2,l=2*r*Math.sin(w2*Math.PI/180);
+if(r<0){l=-l;w=-w;w2=-w2;}
+C.push({op:'turn',v:w2,line,q:1});
+for(let i=0;i<steps;i++){C.push({op:'fd',v:l,line,q:1});C.push({op:'turn',v:w,line,q:1});}
+C.push({op:'turn',v:-w2,line,q:1});
+break;
+}
+default: break;
+}
+if(C.length>60000)throw new PyErr('RuntimeError','слишком много команд','Черепашка устала: уменьши число повторений.',line);
+return;
+}
+throw nameErr(name,ctx,line,false);
+}
+function build(src){
+const items=[];
+src.replace(/\r/g,'').split('\n').forEach((raw,i)=>{
+const t=raw.replace(/\s+$/,'');
+if(!t.trim()||t.trim().startsWith('#'))return;
+const ind=t.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;
+items.push({i,ind,text:t.trim()});
+});
+let p=0;
+function block(ind){
+const out=[];
+while(p<items.length){
+const it=items[p];
+if(it.ind<ind)break;
+if(it.ind>ind)throw new PyErr('IndentationError','unexpected indent','Убери лишние пробелы в начале строки — команда должна начинаться с самого края.',it.i);
+p++;
+const node={line:it.i,text:it.text};
+if(/^for\b/.test(it.text)){
+node.type='for';
+const nx=items[p];
+if(!nx||nx.ind<=ind)throw new PyErr('IndentationError','expected an indented block','Команды внутри цикла пишутся с отступом в 4 пробела.',nx?nx.i:it.i);
+node.body=block(nx.ind);
+}
+out.push(node);
+}
+return out;
+}
+return block(0);
+}
+function runNode(n,ctx){
+if(++ctx.steps>200000)throw new PyErr('RuntimeError','программа работает слишком долго','Уменьши число повторений.',n.line);
+const toks=tokenize(n.text,n.line);
+if(!toks.length)return;
+const v0=toks[0].k==='name'?toks[0].v:null;
+if(n.type==='for'){
+if(!(toks[1]&&toks[1].k==='name'&&toks[2]&&toks[2].v==='in'))throw new PyErr('SyntaxError','invalid syntax','Цикл пишется так: for i in range(4):',n.line);
+const last=toks[toks.length-1];
+if(!(last.k==='op'&&last.v===':'))throw new PyErr('SyntaxError',"expected ':'",'В конце строки с for нужно двоеточие.',n.line);
+const P=parser(toks.slice(3,-1),ctx,n.line);
+const it=P.expr();
+if(!P.done())throw new PyErr('SyntaxError','invalid syntax','',n.line);
+let seq;
+if(it.t==='range')seq=it.v.map(I);
+else if(it.t==='list')seq=it.v;
+else if(it.t==='str')seq=[...it.v].map(S);
+else throw new PyErr('TypeError',`'${TYPE(it)}' object is not iterable`,'После in обычно пишут range(число).',n.line);
+for(const v of seq){ctx.env[toks[1].v]=v;for(const b of n.body)runNode(b,ctx);}
+return;
+}
+if(v0==='from'){
+const txt=toks.map(t=>t.v).join(' ');
+if(txt==='from turtle import *'){ctx.turtle=true;return;}
+if(toks[1]&&toks[1].v!=='turtle')throw new PyErr('ModuleNotFoundError',`No module named '${toks[1].v}'`,'Модуль черепашки называется turtle.',n.line);
+if(toks[1]&&toks[1].v==='turtle'&&txt.startsWith('from turtle import')){ctx.turtle=true;return;}
+throw new PyErr('SyntaxError','invalid syntax','Подключение пишется так: from turtle import *',n.line);
+}
+if(v0==='import'){
+if(toks[1]&&toks[1].v==='turtle'){ctx.turtle=true;return;}
+throw new PyErr('ModuleNotFoundError',`No module named '${toks[1]?toks[1].v:''}'`,'',n.line);
+}
+if(v0&&toks[1]&&toks[1].k==='op'&&toks[1].v==='='){
+if(ALLNAMES.includes(v0))throw new PyErr('SyntaxError','invalid syntax',`«${v0}» — имя команды. Скобки забыл? ${v0}(...)`,n.line);
+const P=parser(toks.slice(2),ctx,n.line);
+const val=P.expr();
+if(!P.done())throw new PyErr('SyntaxError','invalid syntax','',n.line);
+ctx.env[v0]=val;return;
+}
+if(!v0)throw new PyErr('SyntaxError','invalid syntax','Строка должна начинаться с команды, например print(...).',n.line);
+let k=0,name=v0;
+if(name==='turtle'&&toks[1]&&toks[1].v==='.'&&toks[2]&&toks[2].k==='name'){name=toks[2].v;k=2;}
+if(!(toks[k+1]&&toks[k+1].k==='op'&&toks[k+1].v==='(')){
+if(toks.length===k+1){
+if(ALLNAMES.includes(name))throw new PyErr('SyntaxError','missing parentheses',`После имени команды нужны скобки: ${name}()`,n.line);
+throw nameErr(name,ctx,n.line,false);
+}
+if(ALLNAMES.includes(name)||ALLNAMES.includes(name.toLowerCase()))throw new PyErr('SyntaxError',`Missing parentheses in call to '${name}'`,`После имени команды нужны скобки: ${name}(${toks.slice(k+1).map(t=>t.k==='str'?"'"+t.v+"'":t.v).join(' ')})`,n.line);
+throw new PyErr('SyntaxError','invalid syntax','Python не понял эту строку. Команды пишутся так: имя(значение).',n.line);
+}
+if(!(name==='print'||TURTLE[name]))throw nameErr(name,ctx,n.line,false);
+if(TURTLE[name]&&!ctx.turtle)throw nameErr(name,ctx,n.line,false);
+const P=parser(toks.slice(k+1),ctx,n.line);
+const args=P.callArgs();
+if(!P.done())throw new PyErr('SyntaxError','invalid syntax','Каждая команда пишется на отдельной строке.',n.line);
+callStmt(name,args,ctx,n.line);
+}
+function run(src,opt={}){
+const ctx={env:{},out:[],cmds:[],turtle:!!opt.turtle,steps:0,inp:(opt.inputs||[]).slice()};
+let error=null;
+try{
+const prog=build(src);
+for(const n of prog)runNode(n,ctx);
+}catch(e){
+if(e instanceof PyErr)error={type:e.type,msg:e.message,hint:e.hint,line:e.line};
+else error={type:'Error',msg:String(e&&e.message||e),hint:'',line:null};
+}
+return {out:ctx.out.map(o=>o.v),cmds:ctx.cmds,error,turtle:ctx.turtle};
+}
+return {run};
+})();
+/* ===== Холст черепашки (с заливкой) ===== */
+class TurtleCanvas{
+constructor(wrap,opt={}){
+this.W=opt.w||500;this.H=opt.h||400;this.cell=opt.cell||25;
+this.base=opt.speed||1;this.onLine=opt.onLine||null;
+this.wrap=wrap;
+wrap.classList.add('tc');
+wrap.style.aspectRatio=this.W+' / '+this.H;
+wrap.style.maxWidth=`min(100%, calc(56vh * ${this.W/this.H}))`;
+wrap.style.marginInline='auto';
+this.cv=document.createElement('canvas');wrap.appendChild(this.cv);
+this.badge=document.createElement('div');this.badge.className='tc-badge';wrap.appendChild(this.badge);
+this.ink=document.createElement('canvas');
+this.gridCv=document.createElement('canvas');
+this.ctx=this.cv.getContext('2d');
+this.reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+this.reset();
+this.ro=new ResizeObserver(()=>this.resize());this.ro.observe(wrap);
+}
+resize(){
+const w=this.wrap.clientWidth;if(!w)return;
+const h=w*this.H/this.W,d=Math.min(window.devicePixelRatio||1,2);
+this.sc=w/this.W;this.d=d;
+for(const c of[this.cv,this.ink,this.gridCv]){c.width=Math.round(w*d);c.height=Math.round(h*d);}
+this.cv.style.width=w+'px';this.cv.style.height=h+'px';
+this.drawGrid();this.redrawInk();this.draw();
+}
+P(x,y){return[(x+this.W/2)*this.sc*this.d,(this.H/2-y)*this.sc*this.d];}
+drawGrid(){
+const g=this.gridCv.getContext('2d'),W=this.gridCv.width,H=this.gridCv.height;
+g.fillStyle='#fbfaff';g.fillRect(0,0,W,H);
+const step=this.cell*this.sc*this.d;const[ox,oy]=this.P(0,0);
+g.lineWidth=1*this.d;g.strokeStyle='rgba(108,96,180,0.13)';
+g.beginPath();
+for(let x=ox%step;x<=W;x+=step){g.moveTo(Math.round(x)+.5,0);g.lineTo(Math.round(x)+.5,H);}
+for(let y=oy%step;y<=H;y+=step){g.moveTo(0,Math.round(y)+.5);g.lineTo(W,Math.round(y)+.5);}
+g.stroke();
+g.strokeStyle='rgba(108,96,180,0.30)';g.beginPath();
+g.moveTo(ox,0);g.lineTo(ox,H);g.moveTo(0,oy);g.lineTo(W,oy);g.stroke();
+}
+reset(){
+this.gen=(this.gen||0)+1;
+Object.assign(this,{x:0,y:0,h:0,pen:true,col:'#15132b',wid:3,vis:true,mult:1,q:[],segs:[],cur:null,running:false,filling:false,fpts:[],fills:[],fillCol:null});
+if(this.ink.width)this.ink.getContext('2d').clearRect(0,0,this.ink.width,this.ink.height);
+if(this._res){this._res();this._res=null;}
+this.draw();
+}
+fillInk(f){
+const g=this.ink.getContext('2d');
+g.fillStyle=f.col;g.beginPath();
+f.pts.forEach((p,i)=>{const[x,y]=this.P(p[0],p[1]);i?g.lineTo(x,y):g.moveTo(x,y);});
+g.closePath();g.fill();
+}
+redrawInk(){
+const g=this.ink.getContext('2d');g.clearRect(0,0,this.ink.width,this.ink.height);
+for(const f of this.fills)this.fillInk(f);
+for(const s of this.segs)this.seg(g,s);
+}
+seg(g,s){
+const[a,b]=this.P(s.x1,s.y1),[c,d]=this.P(s.x2,s.y2);
+g.strokeStyle=s.col;g.lineWidth=Math.max(1,s.w*this.sc)*this.d;g.lineCap='round';g.lineJoin='round';
+g.beginPath();g.moveTo(a,b);g.lineTo(c,d);g.stroke();
+}
+play(cmds,opt={}){
+if(opt.onLine!==undefined)this.onLine=opt.onLine;
+for(const c of cmds)this.q.push(Object.assign({},c));
+return new Promise(res=>{
+const prev=this._res;this._res=()=>{if(prev)prev();res();};
+if(!this.running){this.running=true;this.last=performance.now();const g=this.gen;requestAnimationFrame(t=>this.tick(t,g));}
+});
+}
+tick(t,g){
+if(g!==this.gen)return;
+let dt=Math.min(64,t-this.last);this.last=t;
+if(this.reduce)dt=1e9;
+this.step(dt);
+this.draw();
+if(this.q.length)requestAnimationFrame(tt=>this.tick(tt,g));
+else{this.running=false;if(this.onLine)this.onLine(null);const r=this._res;this._res=null;if(r)r();}
+}
+rates(){const m=this.base*this.mult;return{mv:0.24*m,tr:0.45*m};}
+step(dt){
+let t=dt;
+while(t>0&&this.q.length){
+const c=this.q[0];
+if(!c._s){
+c._s=1;c._p=0;
+if(this.onLine&&!c.q)this.onLine(c.line);
+else if(this.onLine&&c.q&&c.line!==this._lastLine)this.onLine(c.line);
+this._lastLine=c.line;
+if(c.op==='fd'){const r=this.h*Math.PI/180;c.sx=this.x;c.sy=this.y;c.tx=this.x+Math.cos(r)*c.v;c.ty=this.y+Math.sin(r)*c.v;c.tot=Math.abs(c.v);}
+else if(c.op==='goto'){c.sx=this.x;c.sy=this.y;c.tx=c.x;c.ty=c.y;c.tot=Math.hypot(c.x-this.x,c.y-this.y);}
+else if(c.op==='turn'){c.sh=this.h;c.tot=Math.abs(c.v);}
+else{
+if(c.op==='color')this.col=c.v;
+else if(c.op==='fillcolor')this.fillCol=c.v;
+else if(c.op==='width')this.wid=c.v;
+else if(c.op==='up')this.pen=false;
+else if(c.op==='down')this.pen=true;
+else if(c.op==='hide')this.vis=false;
+else if(c.op==='show')this.vis=true;
+else if(c.op==='seth')this.h=c.v;
+else if(c.op==='begin'){this.filling=true;this.fpts=[[this.x,this.y]];}
+else if(c.op==='end'){if(this.filling&&this.fpts.length>2){const f={pts:this.fpts.slice(),col:this.fillCol||this.col};this.fills.push(f);this.fillInk(f);}this.filling=false;this.fpts=[];}
+else if(c.op==='speed')this.mult=c.v===0?40:Math.max(0.3,c.v/3);
+this.q.shift();continue;
+}
+}
+const R=this.rates(),rate=c.op==='turn'?R.tr:R.mv;
+const need=(c.tot-c._p)/rate;
+if(need<=t){
+t-=need;c._p=c.tot;
+if(c.op==='turn')this.h=c.sh+c.v;
+else{this.x=c.tx;this.y=c.ty;if(this.pen&&c.tot>0){const s={x1:c.sx,y1:c.sy,x2:c.tx,y2:c.ty,col:this.col,w:this.wid};this.segs.push(s);this.seg(this.ink.getContext('2d'),s);}if(this.filling)this.fpts.push([this.x,this.y]);}
+this.cur=null;this.q.shift();
+}else{
+c._p+=rate*t;t=0;
+const f=c._p/c.tot;
+if(c.op==='turn')this.h=c.sh+Math.sign(c.v)*c._p;
+else{this.x=c.sx+(c.tx-c.sx)*f;this.y=c.sy+(c.ty-c.sy)*f;this.cur=this.pen?{x1:c.sx,y1:c.sy,x2:this.x,y2:this.y,col:this.col,w:this.wid}:null;}
+}
+}
+}
+draw(){
+const g=this.ctx;if(!this.cv.width)return;
+g.clearRect(0,0,this.cv.width,this.cv.height);
+g.drawImage(this.gridCv,0,0);g.drawImage(this.ink,0,0);
+if(this.cur)this.seg(g,this.cur);
+if(this.vis)this.sprite(g);
+const hh=((Math.round(this.h)%360)+360)%360;
+this.badge.textContent=`X: ${Math.round(this.x)} | Y: ${Math.round(this.y)} | Угол: ${hh}°`;
+}
+sprite(g){
+const[px,py]=this.P(this.x,this.y),k=Math.max(0.8,Math.min(1.5,this.sc*1.3))*this.d;
+g.save();g.translate(px,py);g.rotate(-this.h*Math.PI/180);g.scale(k,k);
+g.fillStyle='#1f8f55';
+for(const[lx,ly]of[[6,8],[6,-8],[-6,8],[-6,-8]]){g.beginPath();g.ellipse(lx,ly,3.6,2.6,0,0,Math.PI*2);g.fill();}
+g.beginPath();g.moveTo(-11,0);g.lineTo(-15,2);g.lineTo(-15,-2);g.closePath();g.fill();
+g.fillStyle='#41c47a';g.beginPath();g.arc(13,0,4.6,0,Math.PI*2);g.fill();
+g.fillStyle='#15132b';g.beginPath();g.arc(15,-2,1,0,Math.PI*2);g.arc(15,2,1,0,Math.PI*2);g.fill();
+const gr=g.createRadialGradient(-2,-3,1,0,0,11);gr.addColorStop(0,'#6fe0a0');gr.addColorStop(1,'#1f9a5a');
+g.fillStyle=gr;g.strokeStyle='#167043';g.lineWidth=1.4;
+g.beginPath();g.ellipse(0,0,10.5,8.5,0,0,Math.PI*2);g.fill();g.stroke();
+g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=1;
+g.beginPath();g.ellipse(0,0,5,4,0,0,Math.PI*2);g.stroke();
+g.fillStyle=this.col;g.beginPath();g.arc(0,0,2,0,Math.PI*2);g.fill();
+g.restore();
+}
+}
+</script>
+<script>
+/* ===== утилиты ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const EMO={snake:'🐍',turtle:'🐢',box:'📦',floppy:'💾',disk:'📀',keyboard:'⌨️',mic:'🎤',laptop:'💻',bulb:'💡',gear:'⚙️',puzzle:'🧩',rocket:'🚀',star:'⭐',coin:'🪙',trophy:'🏆',check:'✅',lock:'🔒',wand:'🪄',books:'📚',memo:'📝',target:'🎯',chart:'📊',globe:'🌍',school:'🏫',grad:'🎓',robot:'🤖',brain:'🧠',package:'📦',pencil:'✏️',ruler:'📏',sparkles:'✨',fire:'🎆',think:'🤔',question:'❓',speech:'💬',mega:'📣',stop:'🛑',sun:'☀️',cookie:'🍪',game:'🎮',people:'👥',coder:'🧑‍💻',wave:'👋',handshake:'🤝',money:'💰',calendar:'📅',receipt:'🧾',numbers:'🔢',float:'🌡️',string:'📝',warn:'⚠️',hand:'✋',paint:'🎨',bucket:'🪣',key:'🔑',flag:'🚩',party:'🎉',mag:'🔍',zap:'⚡',plus:'➕',equals:'🟰'};
+const ic=(n,cls='',w=64)=>`<span class="emj ${cls}" style="font-size:${w}px" aria-hidden="true">${EMO[n]||'❓'}</span>`;
+function hl(src){
+const re=/(#[^\n]*)|('(?:[^'\\\n]|\\.)*'?|"(?:[^"\\\n]|\\.)*"?)|\b(from|import|for|in|range|if|else|while|def|return|print|input|int|str|float|len|abs|round|True|False)\b|([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()|(\b\d+(?:\.\d+)?\b)|([+\-*\/%=<>]+)/g;
+let out='',last=0,m;
+while((m=re.exec(src))){
+out+=esc(src.slice(last,m.index));
+const[t,com,str,kw,fn,num,op]=m;
+out+=com?`<span class="k-com">${esc(t)}</span>`:str?`<span class="k-str">${esc(t)}</span>`:kw?`<span class="k-kw">${esc(t)}</span>`:fn?`<span class="k-fn">${esc(t)}</span>`:num?`<span class="k-num">${esc(t)}</span>`:`<span class="k-op">${esc(t)}</span>`;
+last=m.index+t.length;
+}
+return out+esc(src.slice(last));
+}
+const hlLines=src=>src.split('\n').map((l,i)=>`<span class="ln" data-l="${i}">${hl(l)||' '}</span>`).join('');
+const codeBox=(src,fn='',opt={})=>`<div class="code ${opt.cls||''}"><div class="code-top"><div class="dots"><i></i><i></i><i></i></div>${opt.title?`<span class="ttl">${esc(opt.title)}</span>`:''}<span class="fn">${esc(fn)}</span></div><pre class="${opt.pre||''}">${opt.lines?hlLines(src):hl(src)}</pre>${opt.after||''}</div>`;
+function termHTML(res,opt={}){
+let h='';
+if(opt.echo)h+=`<span class="muted">$ python3 main.py</span>\n`;
+if(res.out.length)h+=res.out.map(l=>`<span class="p">&gt;</span>${esc(l)}`).join('\n');
+if(res.error){
+if(res.out.length)h+='\n';
+const ln=res.error.line!=null?`Строка ${res.error.line+1}: `:'';
+h+=`<span class="err">${esc(ln+res.error.type+': '+res.error.msg)}</span>${res.error.hint?`<span class="hint">💡 ${esc(res.error.hint)}</span>`:''}`;
+}
+if(!res.out.length&&!res.error)h+=`<span class="muted">${opt.empty||'(программа ничего не напечатала)'}</span>`;
+return h;
+}
+let toastT;
+function toast(msg){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2400);}
+function confetti(){
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const cv=$('#confetti'),g=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+const cols=['#7b5cff','#ff6fb0','#ffcf4a','#3fd7a6','#5fc3ff','#ff8a3d'];
+const ps=Array.from({length:160},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight*.55,vx:(Math.random()-.5)*16,vy:-Math.random()*18-6,r:Math.random()*6+4,c:cols[Math.random()*6|0],a:Math.random()*6,va:(Math.random()-.5)*.4}));
+let f=0;
+(function fr(){
+g.clearRect(0,0,cv.width,cv.height);
+ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.5;p.vx*=.99;p.a+=p.va;g.save();g.translate(p.x,p.y);g.rotate(p.a);g.fillStyle=p.c;g.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);g.restore();});
+if(++f<150)requestAnimationFrame(fr);else g.clearRect(0,0,cv.width,cv.height);
+})();
+}
+/* ===== демо-блок: код + (ввод пользователя) + вопрос + терминал + (холст) ===== */
+function pyDemo(root,cfg){
+let code=cfg.tabs?cfg.tabs[0].code:cfg.code;
+root.innerHTML=`<div class="split">
+<div class="body">
+${cfg.tabs?`<div class="seg" role="tablist">${cfg.tabs.map((t,i)=>`<button aria-pressed="${i===0}" data-t="${i}">${esc(t.name)}</button>`).join('')}</div>`:''}
+<div data-code></div>
+${cfg.inputs?`<div class="island" style="padding:14px 16px"><div class="card-t" style="margin:0 0 6px">👤 Пользователь вводит:</div>${cfg.inputs.map((p,i)=>`<label class="fld"><span>${esc(p)}</span><input data-in="${i}" placeholder="введи значение…"></label>`).join('')}</div>`:''}
+<div class="row"><button class="btn" data-run>▶ Запустить</button><button class="btn ghost icon" data-reset title="Сбросить">↺</button></div>
+${cfg.tip?`<div class="praise">💡 ${esc(cfg.tip)}</div>`:''}
+</div>
+<div class="body">
+${cfg.question?`<div class="island" style="padding:14px 16px"><div class="card-t" style="margin:0 0 10px">🤔 ${esc(cfg.question.q)}</div><div class="places">${cfg.question.opts.map((o,i)=>`<button class="btn ghost sm" data-q="${i}">${esc(o)}</button>`).join('')}</div><div data-why style="margin-top:12px"></div></div>`:''}
+<div class="term" data-term><span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span></div>
+${cfg.turtle?`<div data-tc style="margin-top:4px"></div>`:''}
+</div></div>`;
+const codeEl=$('[data-code]',root),term=$('[data-term]',root);
+const showCode=()=>{codeEl.innerHTML=codeBox(code,cfg.fn||'main.py',{lines:true});};
+showCode();
+let T=null;
+if(cfg.turtle){T=new TurtleCanvas($('[data-tc]',root),cfg.turtleOpt||{w:420,h:320,speed:1.6});root._cleanup=()=>T.reset();}
+const run=()=>{
+const res=PY.run(code,{inputs:$$('[data-in]',root).map(i=>i.value),turtle:!!cfg.turtle});
+term.innerHTML=termHTML(res,{echo:true});
+if(T){T.reset();if(!res.error&&res.cmds.length)T.play(res.cmds);}
+};
+root.addEventListener('click',e=>{
+const tb=e.target.closest('[data-t]');
+if(tb&&cfg.tabs){code=cfg.tabs[+tb.dataset.t].code;$$('.seg button',root).forEach(b=>b.setAttribute('aria-pressed',b===tb));showCode();term.innerHTML='<span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span>';if(T)T.reset();return;}
+if(e.target.closest('[data-run]')){run();return;}
+if(e.target.closest('[data-reset]')){term.innerHTML='<span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span>';if(T)T.reset();$$('[data-in]',root).forEach(i=>i.value='');return;}
+const q=e.target.closest('[data-q]');
+if(q&&cfg.question){
+const i=+q.dataset.q,ok=i===cfg.question.ok;
+$$('[data-q]',root).forEach(b=>b.classList.toggle('pick-bad',b===q&&!ok));
+$('[data-why]',root).innerHTML=`<div class="reply ${ok?'ok':'no'} reveal"><span style="font-size:44px">${ok?'🎉':'🤔'}</span><div><b>${ok?'Верно!':'Не совсем.'}</b> ${cfg.question.why}</div></div>`;
+if(ok)confetti();
+}
+});
+if(cfg.autorun)run();
+}
+/* ===== слайды ===== */
+const R={};
+R.cover={
+own:true,
+html:m=>`<div class="cover"><h1 class="t">${esc(m.title)}</h1><p class="lead">${esc(m.text)}</p>
+<div class="cover-art"><div class="ped"></div><div class="hero float">🐍</div>
+${[['📦','left:6%;top:8%'],['⌨️','left:20%;top:52%'],['💾','left:2%;top:56%'],['🚀','right:4%;top:8%'],['💡','right:20%;top:2%'],['🪙','right:4%;top:56%'],['💻','left:28%;top:0%'],['✨','right:24%;top:48%']].map(([n,p],i)=>`<span class="fl float" style="${p};animation-delay:-${i*.7}s">${n}</span>`).join('')}</div>
+<div class="loader" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i></i><span>Добро пожаловать. Загрузка интерфейса…</span></div>
+<button class="btn orange" data-go hidden>Начать миссию ▶</button></div>`,
+mount(el){
+const L=$('.loader',el),sp=$('span',L),go=$('[data-go]',el);let p=0;
+const t=setInterval(()=>{
+p=Math.min(100,p+3+Math.random()*6);L.style.setProperty('--p',p+'%');L.setAttribute('aria-valuenow',Math.round(p));
+if(p>=100){clearInterval(t);sp.textContent='Интерфейс загружен — 100%!';go.hidden=false;}
+},90);
+el._cleanup=()=>clearInterval(t);
+go.onclick=()=>goTo(cur+1);
+}
+};
+R.platformTest={
+own:true,
+html:()=>`<div class="platform"><div class="arts"><span class="emj float" style="font-size:clamp(90px,9vw,140px)">💻</span><span class="emj float" style="font-size:clamp(150px,15vw,230px)">📝</span><span class="emj float" style="font-size:clamp(70px,8vw,110px)">⭐</span></div>
+<h1 class="t">Выполни тест <span class="no">«Давай вспомним!»</span> на платформе</h1>
+<p class="lead">Открой тест «Давай вспомним!» на платформе Python Start и ответь на все вопросы — он поможет вспомнить прошлый урок.</p></div>`
+};
+function commonSlide(objs,answer,explain){
+return{
+own:true,
+html:m=>`<div class="bigq"><div class="arts">${objs.map(o=>`<span class="emj float" style="font-size:clamp(80px,12vw,140px)">${o}</span>`).join('<span style="font:900 44px var(--f-display);color:var(--ink-3)">+</span>')}</div>
+<h1 class="t">${esc(m.title)}</h1>
+<p class="lead" style="text-align:center">${esc(m.text||'')}</p>
+<div class="yn"><button class="btn violet" data-show>💡 Показать ответ</button></div><div data-r></div></div>`,
+mount(el){
+$('[data-show]',el).onclick=()=>{
+$('[data-r]',el).innerHTML=`<div class="reply ok reveal"><span style="font-size:56px">✅</span><div><b style="font:900 26px var(--f-display)">${esc(answer)}</b><br>${esc(explain)}</div></div>`;
+confetti();
+};
+}
+};
+}
+R.common1=commonSlide(['📦',''],'Хранить что-то','Коробка хранит вещи, а диск — данные. И то и другое — «хранилище»! Именно так работает переменная: она хранит данные программы.');
+R.common2=commonSlide(['⌨️','🎤'],'Вводить данные','Клавиатура и микрофон помогают человеку вводить данные в компьютер. В Python для этого есть команда input().');
+R.today={
+html:()=>`<div class="map">${[['📦','Узнаем, где можно хранить данные: познакомимся с переменными'],['⌨️','Научимся вводить числа и строки с помощью input()'],['🐢','Выполним задание на платформе и научим черепашку новому']].map(([i,t],k)=>`<div class="mission"><div class="island" style="border-radius:50%;padding:16px"><span class="emj float" style="font-size:80px">${i}</span></div><span class="n">Миссия ${k+1}</span><div class="card-t">${esc(t)}</div></div>`).join('')}</div>`
+};
+const sec=emoji=>({
+own:true,
+html:m=>`<div class="sec"><div><div class="eyebrow">${esc(m.tag)}</div><h1 class="t">${esc(m.title)}</h1>${m.text?`<p class="lead">${esc(m.text)}</p>`:''}</div><div class="art"><span class="emj big float">${emoji}</span></div></div>`
+});
+R.varsSec=sec('📦');
+R.varDef={
+html:m=>`<p class="def">Переменная — это <em>именованный элемент данных</em> в памяти компьютера.</p>
+<div class="grid g3" style="margin-top:20px">
+<div class="island lift"><div class="icon-bub t-violet">${ic('box')}</div><div class="card-t">Коробка для значений</div><p class="card-d">Представь коробку: внутрь можно положить разные вещи (числа, текст) и дать ей уникальное имя, чтобы легко найти содержимое.</p></div>
+<div class="island lift"><div class="icon-bub t-mint">${ic('zap')}</div><div class="card-t">Для чего нужны?</div><p class="card-d">Переменные позволяют работать с данными, которые могут меняться во время выполнения программы. Код становится гибким и многоразовым.</p></div>
+<div class="island lift"><div class="icon-bub t-sky">${ic('key')}</div><div class="card-t">Уникальное имя</div><p class="card-d">Каждая переменная имеет своё имя. По этому имени программа достаёт нужное значение из памяти — как по ярлычку на коробке.</p></div>
+</div>`
+};
+R.varSteps={
+html:()=>`<div class="split"><div class="body">
+<div class="island"><div class="row"><span class="chip num">ШАГ 1</span>${ic('pencil','',44)}</div><div class="card-t">Придумать имя</div><p class="card-d">Каждая переменная должна иметь уникальное и понятное имя. Это поможет вам (и другим программистам) легко понять, что хранится в этой «коробке» с данными.</p></div>
+<div class="island"><div class="row"><span class="chip num">ШАГ 2</span>${ic('equals','',44)}</div><div class="card-t">Присвоить значение</div><p class="card-d">После того как переменная названа, в неё можно «положить» данные — число, текст или что-то другое. Для этого используется оператор присваивания <b>=</b>.</p></div>
+</div>
+<div class="body">${codeBox('имя = значение','формула переменной',{pre:'huge'})}
+<div class="fact">${ic('bulb','',44)}<span>Знак <b>=</b> в программировании означает не «равно», а «положить значение в переменную»!</span></div></div></div>`
+};
+R.varEx={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`hours = 6
+minutes = 42
+print('Пользователь интернета проводил в онлайне', hours, 'часов', minutes, 'минут ежедневно.')`,
+tip:'Мы создали две переменные: hours и minutes, а потом подставили их в print(). Нажми «Запустить»!',
+question:{q:'Сколько переменных создала эта программа?',opts:['1','2','3','Ни одной'],ok:1,why:'Переменные hours и minutes — их две. Текст внутри print() — не переменная.'}
+});
+}
+};
+R.assignOp={
+html:()=>{
+const PARTS=[
+{k:'name',c:'#5fc3ff',h:'score',d:'Имя переменной — «коробка» для наших данных.'},
+{k:'op',c:'#ff8a3d',h:'=',d:'Оператор присваивания — «кладёт» значение в переменную.'},
+{k:'val',c:'#3fd7a6',h:'100',d:'Значение, которое мы помещаем в score.'}];
+return `<div class="anat"><div class="code"><div class="code-top"><div class="dots"><i></i><i></i><i></i></div><span class="fn">Terminal — python3</span></div><pre class="huge"><span class="part" data-k="name" style="--pc:#5fc3ff" tabindex="0">score</span> <span class="k-op"><span class="part" data-k="op" style="--pc:#ff8a3d" tabindex="0">=</span></span> <span class="k-num"><span class="part" data-k="val" style="--pc:#3fd7a6" tabindex="0">100</span></span></pre></div>
+<div class="bubbles">${PARTS.map(p=>`<button class="bub" data-k="${p.k}" style="--pc:${p.c}"><b>${esc(p.h)}</b>${esc(p.d)}</button>`).join('')}</div>
+<div class="term" style="width:min(900px,100%)">${termHTML(PY.run('score = 100\nprint(score)'),{echo:true})}</div></div>`;
+},
+mount(el){
+const on=k=>{$$('.part',el).forEach(p=>p.classList.toggle('on',p.dataset.k===k));$$('.bub',el).forEach(b=>b.classList.toggle('on',b.dataset.k===k));};
+el.addEventListener('click',e=>{const p=e.target.closest('[data-k]');if(p)on(p.dataset.k);});
+el.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.k)on(e.target.dataset.k);});
+on('name');
+}
+};
+R.varChange={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`hours = 6          # переменной hours присваивается 6
+hours = 7.5        # значение hours изменяется на 7.5
+print(hours)`,
+question:{q:'Что напечатает программа?',opts:['6','7.5','6 и 7.5','13.5'],ok:1,why:'Новое значение перезаписало старое: переменная hours теперь содержит 7.5, а 6 было утеряно.'},
+tip:'Оператор = может не только создавать переменную, но и менять её значение!'
+});
+}
+};
+R.types={
+html:()=>`<div class="grid g3">
+<div class="island lift"><div class="icon-bub t-mint">${ic('numbers')}</div><div class="card-t">Целые числа (int)</div><p class="card-d">Например: 10, -5, 1000. Используются для счёта и арифметики без дробной части.</p></div>
+<div class="island lift"><div class="icon-bub t-sky">${ic('float')}</div><div class="card-t">Десятичные дроби (float)</div><p class="card-d">Например: 3.14, 0.5, -12.7. Для точных расчётов и измерений.</p></div>
+<div class="island lift"><div class="icon-bub t-pink">${ic('string')}</div><div class="card-t">Строки (str)</div><p class="card-d">Например: 'Hello', "Python". Текст в кавычках. Строки можно склеивать знаком +.</p></div>
+</div>
+<div class="split" style="margin-top:20px">
+<div class="island"><div class="card-t" style="margin-top:0">Программа 1</div>${codeBox("a = 12\nb = 18\nprint(a + b)",'prog1.py')}<button class="btn sm" data-r1 style="margin-top:12px">▶ Что выведет?</button><div class="term" data-t1 style="margin-top:10px" hidden></div></div>
+<div class="island"><div class="card-t" style="margin-top:0">Программа 2</div>${codeBox("a = 'Hello, '\nb = 'world!'\nprint(a + b)",'prog2.py')}<button class="btn sm" data-r2 style="margin-top:12px">▶ Что выведет?</button><div class="term" data-t2 style="margin-top:10px" hidden></div></div>
+</div>`,
+mount(el){
+const go=(btn,termSel,code)=>$(btn,el).onclick=()=>{const t=$(termSel,el);t.hidden=false;t.innerHTML=termHTML(PY.run(code),{echo:true});};
+go('[data-r1]','[data-t1]',"a = 12\nb = 18\nprint(a + b)");
+go('[data-r2]','[data-t2]',"a = 'Hello, '\nb = 'world!'\nprint(a + b)");
+}
+};
+R.salaryQ={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`daily_salary = 1000
+days = 22
+total = daily_salary * days
+print(total)`,
+question:{q:'Что напечатает эта программа (зарплата за период)?',opts:['22000','1022','100022','Ошибка'],ok:0,why:'Численные переменные можно перемножать: 1000 * 22 = 22000.'}
+});
+}
+};
+R.salaryChange={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`daily_salary = 1000
+days = 22
+daily_salary = 500
+total = daily_salary * days
+print(total)`,
+question:{q:'Дневная ставка изменилась по ходу программы. Что напечатается?',opts:['22000','11000','500','Ошибка'],ok:1,why:'Программа всегда использует последнее присвоенное значение: 500 * 22 = 11000. Порядок присваивания очень важен!'},
+tip:'Переменные позволяют динамически управлять данными — но следи за порядком присваивания!'
+});
+}
+};
+const platformHTML=(n,name,icon)=>`<div class="platform"><div class="arts"><span class="emj float" style="font-size:clamp(90px,9vw,140px)">💻</span><span class="emj float" style="font-size:clamp(150px,15vw,230px)">${icon}</span><span class="emj float" style="font-size:clamp(70px,8vw,110px)">⭐</span></div>
+<h1 class="t">Выполни задание <span class="no">№${n}</span> на платформе</h1><p class="lead">Задание «${esc(name)}». Открой его на платформе Python Start и выполни все шаги.</p></div>`;
+R.practice1={own:true,html:()=>platformHTML(1,'Переменные и типы данных','📦')};
+R.inputSec=sec('⌨️');
+R.inputDef={
+html:()=>{
+const PARTS=[
+{k:'v',c:'#5fc3ff',h:'name',d:'Переменная, в которую попадёт ответ пользователя.'},
+{k:'eq',c:'#ff8a3d',h:'=',d:'Оператор присваивания: кладёт результат в переменную.'},
+{k:'fn',c:'#b77bff',h:'input()',d:'Алгоритм, считывающий данные с клавиатуры.'},
+{k:'p',c:'#3fd7a6',h:'подсказка',d:'Текст-подсказка для пользователя — он появится на экране.'}];
+return `<div class="anat"><div class="code"><div class="code-top"><div class="dots"><i></i><i></i><i></i></div><span class="fn">Terminal — python3</span></div><pre class="huge" style="font-size:clamp(20px,3vw,44px)"><span class="part" data-k="v" style="--pc:#5fc3ff" tabindex="0">name</span> <span class="k-op"><span class="part" data-k="eq" style="--pc:#ff8a3d" tabindex="0">=</span></span> <span class="k-fn"><span class="part" data-k="fn" style="--pc:#b77bff" tabindex="0">input</span></span><span class="k-op">(</span><span class="k-str"><span class="part" data-k="p" style="--pc:#3fd7a6" tabindex="0">'Введите ваше имя:   '</span></span><span class="k-op">)</span></pre></div>
+<div class="bubbles">${PARTS.map(p=>`<button class="bub" data-k="${p.k}" style="--pc:${p.c}"><b>${esc(p.h)}</b>${esc(p.d)}</button>`).join('')}</div>
+<div class="fact" style="width:min(900px,100%)">${ic('warn','',44)}<span>Запомни: результат работы <b>input()</b> — всегда <b>строка</b>, даже если пользователь ввёл число!</span></div></div>`;
+},
+mount(el){
+const on=k=>{$$('.part',el).forEach(p=>p.classList.toggle('on',p.dataset.k===k));$$('.bub',el).forEach(b=>b.classList.toggle('on',b.dataset.k===k));};
+el.addEventListener('click',e=>{const p=e.target.closest('[data-k]');if(p)on(p.dataset.k);});
+on('fn');
+}
+};
+R.inputCollect={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`surname = input('Введите фамилию управляющего: ')
+city = input('Введите город: ')
+print('Директор филиала в г.', city, '-', surname)`,
+inputs:['Введите фамилию управляющего:','Введите город:'],
+tip:'Введи значения в поля слева (например: Солнцев и Тула) и запусти — программа подставит их в текст!',
+question:{q:'Что напечатает программа, если ввести «Солнцев» и «Тула»?',opts:['Директор филиала в г. Тула - Солнцев','Директор филиала в г. Солнцев - Тула','Тула Солнцев','Ошибка'],ok:0,why:'print подставил переменные: city = Тула, surname = Солнцев — именно в том порядке, как они записаны в команде.'}
+});
+}
+};
+R.inputError={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`add_services = input('Стоимость дополнительных услуг:')
+total = 2500 + add_services
+print('Общая стоимость:', total)`,
+inputs:['Стоимость дополнительных услуг:'],
+question:{q:'Пользователь ввёл 300. Что будет?',opts:['Напечатает 2800','Напечатает 2500300','Будет ошибка!'],ok:2,why:'Кажется, в программе ошибка! input() вернул строку \'300\', а компьютер не знает, как прибавить к целому числу строку.'},
+tip:'Введи 300 в поле и нажми «Запустить» — увидишь настоящую реакцию компьютера.'
+});
+}
+};
+R.inputWhy={
+html:()=>`<div class="split"><div class="body">
+<div class="island"><div class="row">${ic('warn','',54)}<div class="card-t" style="margin:0">В чём дело?</div></div>
+<p class="card-d" style="margin-top:10px;font-size:17px">Результат работы <b>input()</b> — <b>строка</b>, а не число. Компьютер не знает, как прибавить к целому числу строку: 2500 + '300' — это TypeError!</p></div>
+<div class="term">${termHTML(PY.run("total = 2500 + '300'"))}</div>
+</div>
+<div class="body">
+<div class="island"><div class="row">${ic('wand','',54)}<div class="card-t" style="margin:0">Как починить?</div></div>
+<p class="card-d" style="margin-top:10px">Превратить строку в число с помощью функции <b>int()</b> — и тогда компьютер спокойно всё посчитает.</p></div>
+${codeBox("add_services = int(add_services)\ntotal = 2500 + add_services\nprint('Общая стоимость:', total)",'fix.py')}
+<div class="term">${termHTML(PY.run("add_services = '300'\nadd_services = int(add_services)\ntotal = 2500 + add_services\nprint('Общая стоимость:', total)"))}</div>
+</div></div>`
+};
+R.intStr={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`add_services = input('Стоимость дополнительных услуг:')
+add_services = int(add_services)
+total = 2500 + add_services
+print('Общая стоимость:', total)`,
+inputs:['Стоимость дополнительных услуг:'],
+question:{q:'Что напечатает программа, если пользователь введёт 300?',opts:['2800','2500300','Ошибка'],ok:0,why:'Теперь компьютер знает, как прибавить к целому числу целое число: 2500 + 300 = 2800. Программа работает!'}
+});
+}
+};
+R.intStrShort={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+code:`add_services = int(input('Стоимость дополнительных услуг:'))
+total = 2500 + add_services
+print('Общая стоимость:', total)`,
+inputs:['Стоимость дополнительных услуг:'],
+tip:'Программу можно записать и короче: int(input(...)) — спросили и сразу превратили в число!',
+question:{q:'Какого типа будет значение в add_services?',opts:['str (строка)','int (целое число)','float (дробное)'],ok:1,why:'input() вернул строку, но int() сразу превратил её в целое число.'}
+});
+}
+};
+R.turtleSec={
+own:true,
+html:m=>`<div class="sec"><div><div class="eyebrow">${esc(m.tag)}</div><h1 class="t">${esc(m.title)}</h1><p class="lead">${esc(m.text)}</p>
+<div class="row">${['✋ penup() — поднять перо','✏️ pendown() — опустить перо','🪣 begin_fill()/end_fill() — заливка'].map(c=>`<span class="chip" style="font-size:15px;padding:10px 16px">${c}</span>`).join('')}</div></div>
+<div class="art"><span class="emj big float">🐢</span></div></div>`
+};
+R.turtlePen={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+turtle:true,
+turtleOpt:{w:420,h:300,speed:1.8},
+tabs:[
+{name:'✋ С penup()',code:`from turtle import *
+color('blue')
+width(5)
+forward(80)
+penup()      # подняли перо
+forward(80)  # идём БЕЗ следа
+pendown()    # опустили перо
+forward(80)`},
+{name:'✏️ Без penup()',code:`from turtle import *
+color('blue')
+width(5)
+forward(80)
+forward(80)
+forward(80)`}],
+tip:'penup() — поднять перо: черепашка двигается и НЕ рисует. pendown() — опустить перо: снова оставляет линию. Сравни два варианта!'
+});
+}
+};
+R.turtleFill={
+html:()=>`<div data-d></div>`,
+mount(el){
+pyDemo($('[data-d]',el),{
+turtle:true,
+turtleOpt:{w:420,h:320,speed:1.6},
+tabs:[
+{name:'🪣 Залитый квадрат',code:`from turtle import *
+color('green')
+fillcolor('yellow')
+begin_fill()
+for i in range(4):
+    forward(120)
+    left(90)
+end_fill()`},
+{name:'🔺 Залитый треугольник',code:`from turtle import *
+color('red')
+fillcolor('orange')
+begin_fill()
+for i in range(3):
+    forward(140)
+    left(120)
+end_fill()`}],
+tip:'begin_fill() — начать заливку, end_fill() — закончить и залить фигуру цветом fillcolor(). Линия рисуется цветом color().'
+});
+}
+};
+R.turtleCheat={
+html:()=>`<div class="split"><div class="island"><div class="card-t" style="margin-top:0">📚 Шпаргалка: новые команды черепашки</div>
+<table class="cheat">
+<tr><td><code>penup()</code></td><td>поднять перо — двигаться без линии</td></tr>
+<tr><td><code>pendown()</code></td><td>опустить перо — снова рисовать линию</td></tr>
+<tr><td><code>goto(x, y)</code></td><td>переместиться в точку с координатами</td></tr>
+<tr><td><code>fillcolor('цвет')</code></td><td>цвет будущей заливки</td></tr>
+<tr><td><code>begin_fill()</code></td><td>начать запоминать фигуру для заливки</td></tr>
+<tr><td><code>end_fill()</code></td><td>залить фигуру выбранным цветом</td></tr>
+</table></div>
+<div class="body"><div class="island" style="text-align:center"><span class="emj float" style="font-size:120px">🐢</span><div class="card-t">Эти команды ждут тебя в тренажёре!</div><p class="card-d">В тренажёре «Урок 2» миссии используют input(), goto(), penup(), pendown() и заливку кругов. Потренируйся там после презентации!</p></div>
+<div class="fact">${ic('sparkles','',44)}<span>Совет: penup() + goto() + pendown() — способ рисовать фигуры в разных местах холста, не соединяя их линиями.</span></div></div></div>`
+};
+R.practice2={own:true,html:()=>platformHTML(2,'Ввод данных и новые команды черепашки','🐢')};
+R.outro={
+html:()=>`<div class="grid g3">${[['🧠','Что узнали?','Переменные хранят данные. input() спрашивает пользователя, int() превращает текст в число, а черепашка научилась поднимать перо и заливать фигуры!'],['🤔','Что оказалось сложным?','Обсудите в классе: где запутались? Помните про порядок присваивания и про то, что input() возвращает строку.'],['🌍','Где бы мне это пригодилось?','Калькуляторы, игры, анкеты, чат-боты — всё это спрашивает данные у пользователя и хранит их в переменных!']].map(([i,h,d])=>`<button class="flip" aria-pressed="false"><div class="in"><div class="f"><span class="emj" style="font-size:96px">${i}</span><div class="card-t">${h}</div><span class="hintx">Нажми, чтобы перевернуть ↻</span></div><div class="b"><div class="card-t">${h}</div><p>${d}</p></div></div></button>`).join('')}</div>
+<div class="row" style="justify-content:center;margin-top:16px"><button class="btn orange" data-go style="font-size:clamp(18px,2vw,24px);padding:20px 34px">🚀 Урок 2 пройден! Дальше — новые уровни!</button></div>`,
+mount(el){
+el.addEventListener('click',e=>{const f=e.target.closest('.flip');if(f){f.classList.toggle('on');f.setAttribute('aria-pressed',f.classList.contains('on'));}});
+$('[data-go]',el).onclick=confetti;
+}
+};
+/* ===== META ===== */
+const META=[
+{id:'cover',tag:'Старт',badge:'Миссия №2',title:'Python Start: Урок 2. Переменные и Ввод данных',text:'На этом уроке мы углубимся в важные концепции Python: программы научатся взаимодействовать с пользователем и хранить информацию.',mood:'day',lead:true},
+{id:'platformTest',tag:'Задание',badge:'Платформа',title:'Выполни тест «Давай вспомним!» на платформе',text:'',mood:'day'},
+{id:'common1',tag:'Повторение',badge:'Вопрос',title:'Что общего у этих двух предметов?',text:'Подумай и нажми кнопку — проверим догадку!',mood:'day',lead:true},
+{id:'common2',tag:'Повторение',badge:'Вопрос',title:'Что общего у этих двух предметов?',text:'Вторая загадка: найди общее и открой ответ!',mood:'day',lead:true},
+{id:'today',tag:'План',badge:'3 миссии',title:'Сегодня на занятии',text:'Три миссии урока: хранение данных, ввод данных и практика на платформе.',mood:'day',lead:true},
+{id:'varsSec',tag:'Раздел',badge:'Переменные',title:'Переменные',text:'Узнаём, где компьютер хранит данные.',mood:'day',lead:true},
+{id:'varDef',tag:'Переменные',badge:'Определение',title:'Что такое переменная?',text:'Именованный элемент данных в памяти компьютера — контейнер для хранения значений.',mood:'day',lead:true},
+{id:'varSteps',tag:'Переменные',badge:'2 шага',title:'Задание переменной',text:'Чтобы использовать переменную, нужно выполнить два ключевых шага.',mood:'day',lead:true},
+{id:'varEx',tag:'Переменные',badge:'Пример',title:'Пример присваивания значений',text:'Создадим две переменные и выведем красивое сообщение.',mood:'day',lead:true},
+{id:'assignOp',tag:'Переменные',badge:'Анатомия',title:'Оператор присваивания',text:'Разберём строку score = 100 по частям. Нажимай на части кода!',mood:'day',lead:true},
+{id:'varChange',tag:'Переменные',badge:'Перезапись',title:'Изменение значения переменной',text:'Что будет, если присвоить значение ещё раз?',mood:'day',lead:true},
+{id:'types',tag:'Переменные',badge:'3 типа',title:'Типы данных',text:'Целые числа, десятичные дроби и строки — три главных типа.',mood:'day',lead:true},
+{id:'salaryQ',tag:'Переменные',badge:'Задача',title:'Действия с численными переменными',text:'Программа рассчитывает зарплату сотрудника. Что она напечатает?',mood:'day',lead:true},
+{id:'salaryChange',tag:'Переменные',badge:'Задача',title:'Изменение значений в расчетах',text:'Дневная ставка изменилась по ходу программы. Какой будет результат?',mood:'day',lead:true},
+{id:'practice1',tag:'Задание',badge:'Платформа',title:'Выполни задание №1 на платформе',text:'',mood:'day'},
+{id:'inputSec',tag:'Раздел',badge:'Ввод данных',title:'Ввод данных',text:'Учимся спрашивать данные у пользователя.',mood:'day',lead:true},
+{id:'inputDef',tag:'input()',badge:'Анатомия',title:'Функция input()',text:'Функция для ввода данных с клавиатуры. Нажимай на части строки!',mood:'day',lead:true},
+{id:'inputCollect',tag:'input()',badge:'Сбор данных',title:'Функция input(): Сбор данных',text:'Программа получает данные от пользователя и сохраняет каждое значение в отдельной переменной.',mood:'day',lead:true},
+{id:'inputError',tag:'input()',badge:'Ловушка',title:'Кажется, в программе ошибка!',text:'Догадаешься какая? Запусти код и посмотри на реакцию компьютера.',mood:'lab',lead:true},
+{id:'inputWhy',tag:'input()',badge:'Разбор',title:'Почему возникла ошибка?',text:'Результат работы input — строка, а не число.',mood:'day',lead:true},
+{id:'intStr',tag:'int() и str()',badge:'Преобразование',title:'Функции int() и str(): Преобразование типов',text:'int() превращает строку в целое число, str() — число в строку.',mood:'day',lead:true},
+{id:'intStrShort',tag:'int() и str()',badge:'Короче!',title:'Программу можно записать короче',text:'int(input(...)) — спросили и сразу превратили в число.',mood:'day',lead:true},
+{id:'turtleSec',tag:'Черепашка',badge:'Новые команды',title:'Черепашка: новые команды тренажёра',text:'Поднять перо, опустить перо и залить фигуру цветом — этому черепашка научилась в уроке 2!',mood:'day',lead:true},
+{id:'turtlePen',tag:'Черепашка',badge:'penup / pendown',title:'Поднять и отпустить перо',text:'penup() — двигаться без следа, pendown() — снова рисовать. Сравни варианты на холсте!',mood:'lab',lead:true},
+{id:'turtleFill',tag:'Черепашка',badge:'Заливка',title:'Заливка фигур: begin_fill() и end_fill()',text:'Нарисуй фигуру и залей её цветом, как в тренажёре урока 2.',mood:'lab',lead:true},
+{id:'turtleCheat',tag:'Черепашка',badge:'Шпаргалка',title:'Шпаргалка по новым командам',text:'Всё, что нужно для миссий тренажёра урока 2.',mood:'day',lead:true},
+{id:'practice2',tag:'Задание',badge:'Платформа',title:'Выполни задание №2 на платформе',text:'',mood:'day'},
+{id:'outro',tag:'Итоги',badge:'Рефлексия',title:'Завершение рабочего дня',text:'Подведём итоги урока 2.',mood:'night',lead:true}
+];
+/* ===== движок презентации ===== */
+let cur=0;
+const N=META.length,slideEl=$('#slide');
+function head(m,i){
+return `<div class="sl-head"><span class="chip num">СЛАЙД ${i+1} ИЗ ${N}</span><span class="chip">${esc(m.tag)}</span><span class="sp"></span><span class="chip badge">✨ ${esc(m.badge)}</span></div>`;
+}
+let curWrap=null;
+function fitSlide(){
+const w=curWrap;if(!w)return;
+w.style.zoom='';
+if(innerWidth<900)return;
+const cs=getComputedStyle(slideEl),padV=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+let k=1;
+for(let n=0;n<5;n++){
+const content=slideEl.scrollHeight-padV,avail=slideEl.clientHeight-padV;
+if(content<=avail+1)break;
+k=Math.max(0.55,k*avail/content);
+w.style.zoom=k;
+if(k===0.55)break;
+}
+}
+let fitT;
+window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitSlide,120);});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitSlide);
+function render(i,anim=true){
+if(curWrap&&curWrap._cleanup){try{curWrap._cleanup();}catch(e){}}
+cur=Math.max(0,Math.min(N-1,i));
+const m=META[cur],r=R[m.id]||{html:()=>''};
+const dark=m.mood==='lab'||m.mood==='night';
+document.body.dataset.bg=m.mood==='lab'?'lab':m.mood==='night'?'night':String(cur%5);
+slideEl.className='slide'+(dark?' dark':'');
+const wrap=document.createElement('div');
+wrap.innerHTML=head(m,cur)+(r.own?'':`<h1 class="t">${esc(m.title)}</h1>${m.lead&&m.text?`<p class="lead">${esc(m.text)}</p>`:''}`)+`<div class="body">${r.html(m)}</div>`;
+slideEl.replaceChildren(wrap);curWrap=wrap;
+slideEl.scrollTop=0;
+if(anim){slideEl.classList.remove('anim');void slideEl.offsetWidth;slideEl.classList.add('anim');}
+if(r.mount)r.mount(wrap,m);
+fitSlide();
+$('#cN').textContent=cur+1;$('#cT').textContent=N;$('#cP').style.width=((cur+1)/N*100)+'%';
+try{history.replaceState(null,'','#s'+(cur+1));}catch(e){}
+}
+function goTo(i){if(i<0||i>=N||i===cur)return;render(i);}
+$('#bPrev').onclick=()=>goTo(cur-1);
+$('#bNext').onclick=()=>goTo(cur+1);
+$('#bRestart').onclick=()=>goTo(0);
+$('#bFull').onclick=()=>{try{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>toast('Полноэкранный режим недоступен здесь'));else document.exitFullscreen();}catch(e){toast('Полноэкранный режим недоступен здесь');}};
+document.addEventListener('keydown',e=>{
+if(e.target.closest('textarea,input'))return;
+if(!$('#ovGrid').hidden){if(e.key==='Escape')$$('.ov').forEach(o=>o.hidden=true);return;}
+if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();goTo(cur+1);}
+if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();goTo(cur-1);}
+if(e.key==='Home')goTo(0);if(e.key==='End')goTo(N-1);
+});
+$$('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o||e.target.closest('[data-close]'))o.hidden=true;}));
+$('#bGrid').onclick=()=>{
+$('#thumbs').innerHTML=META.map((m,i)=>`<button class="thumb ${i===cur?'cur':''}" data-i="${i}"><b>${String(i+1).padStart(2,'0')}</b><span>${esc(m.title)}</span><em>${esc(m.tag)} · ${esc(m.badge)}</em></button>`).join('');
+$('#ovGrid').hidden=false;
+};
+$('#thumbs').addEventListener('click',e=>{const t=e.target.closest('.thumb');if(t){$('#ovGrid').hidden=true;goTo(+t.dataset.i);}});
+const hm=/^#s(\d+)$/.exec(location.hash);
+render(hm?(+hm[1]-1):0,false);
+</script>
+</body>
+</html>
