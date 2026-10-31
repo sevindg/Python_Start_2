@@ -153,7 +153,7 @@ p.lead{font-size:clamp(16px,1.45vw,21px);line-height:1.55;color:var(--ink-2);mar
 .bigq h1.t{font-size:clamp(30px,4.2vw,58px);max-width:20ch}
 .bigq .arts{display:flex;gap:30px;justify-content:center;align-items:center}
 .yn{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
-.reply{max-width:760px;border-radius:24px;padding:18px 22px;font-size:18px;line-height:1.5;text-align:left;display:flex;gap:16px;align-items:center;box-shadow:var(--clay)}
+.reply{max-width:760px;border-radius:24px;padding:18px 22px;font-size:18px;line-height:1.5;text-align:left;display:flex;gap:16px;align-items:center;box-shadow:var(--clay);background:#fff;color:#1c1940}
 .reply.ok{background:var(--ok-bg)}
 .reply.no{background:#fff4e3}
 .reveal>*{animation:rise .5s both}
@@ -198,11 +198,7 @@ p.lead{font-size:clamp(16px,1.45vw,21px);line-height:1.55;color:var(--ink-2);mar
 .map::before{display:none}
 .sec{grid-template-columns:minmax(0,1fr)}
 #bar .lbl{display:none}
-}
-@media (max-width:560px){
-.g2{grid-template-columns:minmax(0,1fr)}
 .slide{padding:18px 14px 26px;border-radius:26px}
-#bar{gap:2px;padding:6px 8px}#bar .bb{padding:8px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
@@ -757,6 +753,47 @@ ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.5;p.vx*=.99;p.a+=p.va;g.save();g.trans
 if(++f<150)requestAnimationFrame(fr);else g.clearRect(0,0,cv.width,cv.height);
 })();
 }
+/* ===== демо-блок: код + (ввод пользователя) + вопрос + терминал + (холст) ===== */
+function pyDemo(root,cfg){
+let code=cfg.tabs?cfg.tabs[0].code:cfg.code;
+root.innerHTML=`<div class="split">
+<div class="body">
+${cfg.tabs?`<div class="seg" role="tablist">${cfg.tabs.map((t,i)=>`<button aria-pressed="${i===0}" data-t="${i}">${esc(t.name)}</button>`).join('')}</div>`:''}
+<div data-code></div>
+${cfg.inputs?`<div class="island" style="padding:14px 16px"><div class="card-t" style="margin:0 0 6px">👤 Пользователь вводит:</div>${cfg.inputs.map((p,i)=>`<label class="fld"><span>${esc(p)}</span><input data-in="${i}" placeholder="введи значение…"></label>`).join('')}</div>`:''}
+<div class="row"><button class="btn" data-run>▶ Запустить</button><button class="btn ghost icon" data-reset title="Сбросить">↺</button></div>
+${cfg.tip?`<div class="praise">💡 ${esc(cfg.tip)}</div>`:''}
+</div>
+<div class="body">
+${cfg.question?`<div class="island" style="padding:14px 16px"><div class="card-t" style="margin:0 0 10px">🤔 ${esc(cfg.question.q)}</div><div class="places">${cfg.question.opts.map((o,i)=>`<button class="btn ghost sm" data-q="${i}">${esc(o)}</button>`).join('')}</div><div data-why style="margin-top:12px"></div></div>`:''}
+<div class="term" data-term><span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span></div>
+${cfg.turtle?`<div data-tc style="margin-top:4px"></div>`:''}
+</div></div>`;
+const codeEl=$('[data-code]',root),term=$('[data-term]',root);
+const showCode=()=>{codeEl.innerHTML=codeBox(code,cfg.fn||'main.py',{lines:true});};
+showCode();
+let T=null;
+if(cfg.turtle){T=new TurtleCanvas($('[data-tc]',root),cfg.turtleOpt||{w:420,h:320,speed:1.6});root._cleanup=()=>T.reset();}
+const run=()=>{
+const res=PY.run(code,{inputs:$$('[data-in]',root).map(i=>i.value),turtle:!!cfg.turtle});
+term.innerHTML=termHTML(res,{echo:true});
+if(T){T.reset();if(!res.error&&res.cmds.length)T.play(res.cmds);}
+};
+root.addEventListener('click',e=>{
+const tb=e.target.closest('[data-t]');
+if(tb&&cfg.tabs){code=cfg.tabs[+tb.dataset.t].code;$$('.seg button',root).forEach(b=>b.setAttribute('aria-pressed',b===tb));showCode();term.innerHTML='<span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span>';if(T)T.reset();return;}
+if(e.target.closest('[data-run]')){run();return;}
+if(e.target.closest('[data-reset]')){term.innerHTML='<span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span>';if(T)T.reset();$$('[data-in]',root).forEach(i=>i.value='');return;}
+const q=e.target.closest('[data-q]');
+if(q&&cfg.question){
+const i=+q.dataset.q,ok=i===cfg.question.ok;
+$$('[data-q]',root).forEach(b=>b.classList.toggle('pick-bad',b===q&&!ok));
+$('[data-why]',root).innerHTML=`<div class="reply ${ok?'ok':'no'} reveal"><span style="font-size:44px">${ok?'🎉':'🤔'}</span><div><b>${ok?'Верно!':'Не совсем.'}</b> ${cfg.question.why}</div></div>`;
+if(ok)confetti();
+}
+});
+if(cfg.autorun)run();
+}
 /* ===== слайды ===== */
 const R={};
 R.cover={
@@ -797,7 +834,6 @@ confetti();
 }
 };
 }
-/* 🆕 второй предмет на слайде с коробкой — диск 📀 */
 R.common1=commonSlide(['📦','📀'],'Хранить что-то','Коробка хранит вещи, а диск — данные. И то и другое — «хранилище»! Именно так работает переменная: она хранит данные программы.');
 R.common2=commonSlide(['⌨️','🎤'],'Вводить данные','Клавиатура и микрофон помогают человеку вводить данные в компьютер. В Python для этого есть команда input().');
 R.today={
@@ -830,7 +866,7 @@ mount(el){
 pyDemo($('[data-d]',el),{
 code:`hours = 6
 minutes = 42
-print('По статистике в 2019 году пользователь интернета проводил в онлайне', hours, 'часов', minutes, 'минут ежедневно.')`,
+print('Пользователь интернета проводил в онлайне', hours, 'часов', minutes, 'минут ежедневно.')`,
 tip:'Мы создали две переменные: hours и minutes, а потом подставили их в print(). Нажми «Запустить»!',
 question:{q:'Сколько переменных создала эта программа?',opts:['1','2','3','Ни одной'],ok:1,why:'Переменные hours и minutes — их две. Текст внутри print() — не переменная.'}
 });
@@ -857,7 +893,7 @@ R.varChange={
 html:()=>`<div data-d></div>`,
 mount(el){
 pyDemo($('[data-d]',el),{
-code:`hours = 6          # переменной hours присваивается значение 6
+code:`hours = 6          # переменной hours присваивается 6
 hours = 7.5        # значение hours изменяется на 7.5
 print(hours)`,
 question:{q:'Что напечатает программа?',opts:['6','7.5','6 и 7.5','13.5'],ok:1,why:'Новое значение перезаписало старое: переменная hours теперь содержит 7.5, а 6 было утеряно.'},
@@ -867,9 +903,9 @@ tip:'Оператор = может не только создавать пере
 };
 R.types={
 html:()=>`<div class="grid g3">
-<div class="island lift"><div class="icon-bub t-mint">${ic('numbers')}</div><div class="card-t">Целые числа (int)</div><p class="card-d">Например: 10, -5, 1000. Используются для счёта и арифметических операций без дробной части.</p></div>
-<div class="island lift"><div class="icon-bub t-sky">${ic('float')}</div><div class="card-t">Десятичные дроби (float)</div><p class="card-d">Например: 3.14, 0.5, -12.7. Используются для более точных расчётов, таких как измерения.</p></div>
-<div class="island lift"><div class="icon-bub t-pink">${ic('string')}</div><div class="card-t">Строки (str)</div><p class="card-d">Например: 'Hello', "Python". Это текст, заключённый в кавычки. Строки можно склеивать знаком +.</p></div>
+<div class="island lift"><div class="icon-bub t-mint">${ic('numbers')}</div><div class="card-t">Целые числа (int)</div><p class="card-d">Например: 10, -5, 1000. Используются для счёта и арифметики без дробной части.</p></div>
+<div class="island lift"><div class="icon-bub t-sky">${ic('float')}</div><div class="card-t">Десятичные дроби (float)</div><p class="card-d">Например: 3.14, 0.5, -12.7. Для точных расчётов и измерений.</p></div>
+<div class="island lift"><div class="icon-bub t-pink">${ic('string')}</div><div class="card-t">Строки (str)</div><p class="card-d">Например: 'Hello', "Python". Текст в кавычках. Строки можно склеивать знаком +.</p></div>
 </div>
 <div class="split" style="margin-top:20px">
 <div class="island"><div class="card-t" style="margin-top:0">Программа 1</div>${codeBox("a = 12\nb = 18\nprint(a + b)",'prog1.py')}<button class="btn sm" data-r1 style="margin-top:12px">▶ Что выведет?</button><div class="term" data-t1 style="margin-top:10px" hidden></div></div>
@@ -1073,47 +1109,37 @@ el.addEventListener('click',e=>{const f=e.target.closest('.flip');if(f){f.classL
 $('[data-go]',el).onclick=confetti;
 }
 };
-/* ===== демо-блок: код + (ввод пользователя) + вопрос + терминал + (холст) ===== */
-function pyDemo(root,cfg){
-let code=cfg.tabs?cfg.tabs[0].code:cfg.code;
-root.innerHTML=`<div class="split">
-<div class="body">
-${cfg.tabs?`<div class="seg" role="tablist">${cfg.tabs.map((t,i)=>`<button aria-pressed="${i===0}" data-t="${i}">${esc(t.name)}</button>`).join('')}</div>`:''}
-<div data-code></div>
-${cfg.inputs?`<div class="island" style="padding:14px 16px"><div class="card-t" style="margin:0 0 6px">👤 Пользователь вводит:</div>${cfg.inputs.map((p,i)=>`<label class="fld"><span>${esc(p)}</span><input data-in="${i}" placeholder="введи значение…"></label>`).join('')}</div>`:''}
-<div class="row"><button class="btn" data-run>▶ Запустить</button><button class="btn ghost icon" data-reset title="Сбросить">↺</button></div>
-${cfg.tip?`<div class="praise">💡 ${esc(cfg.tip)}</div>`:''}
-</div>
-<div class="body">
-${cfg.question?`<div class="island" style="padding:14px 16px"><div class="card-t" style="margin:0 0 10px">🤔 ${esc(cfg.question.q)}</div><div class="places">${cfg.question.opts.map((o,i)=>`<button class="btn ghost sm" data-q="${i}">${esc(o)}</button>`).join('')}</div><div data-why style="margin-top:12px"></div></div>`:''}
-<div class="term" data-term><span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span></div>
-${cfg.turtle?`<div data-tc style="margin-top:4px"></div>`:''}
-</div></div>`;
-const codeEl=$('[data-code]',root),term=$('[data-term]',root);
-const showCode=()=>{codeEl.innerHTML=codeBox(code,cfg.fn||'main.py',{lines:true});};
-showCode();
-let T=null;
-if(cfg.turtle){T=new TurtleCanvas($('[data-tc]',root),cfg.turtleOpt||{w:420,h:320,speed:1.6});root._cleanup=()=>T.reset();}
-const run=()=>{
-const res=PY.run(code,{inputs:$$('[data-in]',root).map(i=>i.value),turtle:!!cfg.turtle});
-term.innerHTML=termHTML(res,{echo:true});
-if(T){T.reset();if(!res.error&&res.cmds.length)T.play(res.cmds);}
-};
-root.addEventListener('click',e=>{
-const tb=e.target.closest('[data-t]');
-if(tb&&cfg.tabs){code=cfg.tabs[+tb.dataset.t].code;$$('.seg button',root).forEach(b=>b.setAttribute('aria-pressed',b===tb));showCode();term.innerHTML='<span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span>';if(T)T.reset();return;}
-if(e.target.closest('[data-run]')){run();return;}
-if(e.target.closest('[data-reset]')){term.innerHTML='<span class="muted">Нажми «▶ Запустить», чтобы увидеть ответ компьютера.</span>';if(T)T.reset();$$('[data-in]',root).forEach(i=>i.value='');return;}
-const q=e.target.closest('[data-q]');
-if(q&&cfg.question){
-const i=+q.dataset.q,ok=i===cfg.question.ok;
-$$('[data-q]',root).forEach(b=>b.classList.toggle('pick-bad',b===q&&!ok));
-$('[data-why]',root).innerHTML=`<div class="reply ${ok?'ok':'no'} reveal"><span style="font-size:44px">${ok?'🎉':''}</span><div><b>${ok?'Верно!':'Не совсем.'}</b> ${cfg.question.why}</div></div>`;
-if(ok)confetti();
-}
-});
-if(cfg.autorun)run();
-}
+/* ===== META ===== */
+const META=[
+{id:'cover',tag:'Старт',badge:'Миссия №2',title:'Python Start: Урок 2. Переменные и Ввод данных',text:'На этом уроке мы углубимся в важные концепции Python: программы научатся взаимодействовать с пользователем и хранить информацию.',mood:'day',lead:true},
+{id:'platformTest',tag:'Задание',badge:'Платформа',title:'Выполни тест «Давай вспомним!» на платформе',text:'',mood:'day'},
+{id:'common1',tag:'Повторение',badge:'Вопрос',title:'Что общего у этих двух предметов?',text:'Подумай и нажми кнопку — проверим догадку!',mood:'day',lead:true},
+{id:'common2',tag:'Повторение',badge:'Вопрос',title:'Что общего у этих двух предметов?',text:'Вторая загадка: найди общее и открой ответ!',mood:'day',lead:true},
+{id:'today',tag:'План',badge:'3 миссии',title:'Сегодня на занятии',text:'Три миссии урока: хранение данных, ввод данных и практика на платформе.',mood:'day',lead:true},
+{id:'varsSec',tag:'Раздел',badge:'Переменные',title:'Переменные',text:'Узнаём, где компьютер хранит данные.',mood:'day',lead:true},
+{id:'varDef',tag:'Переменные',badge:'Определение',title:'Что такое переменная?',text:'Именованный элемент данных в памяти компьютера — контейнер для хранения значений.',mood:'day',lead:true},
+{id:'varSteps',tag:'Переменные',badge:'2 шага',title:'Задание переменной',text:'Чтобы использовать переменную, нужно выполнить два ключевых шага.',mood:'day',lead:true},
+{id:'varEx',tag:'Переменные',badge:'Пример',title:'Пример присваивания значений',text:'Создадим две переменные и выведем красивое сообщение.',mood:'day',lead:true},
+{id:'assignOp',tag:'Переменные',badge:'Анатомия',title:'Оператор присваивания',text:'Разберём строку score = 100 по частям. Нажимай на части кода!',mood:'day',lead:true},
+{id:'varChange',tag:'Переменные',badge:'Перезапись',title:'Изменение значения переменной',text:'Что будет, если присвоить значение ещё раз?',mood:'day',lead:true},
+{id:'types',tag:'Переменные',badge:'3 типа',title:'Типы данных',text:'Целые числа, десятичные дроби и строки — три главных типа.',mood:'day',lead:true},
+{id:'salaryQ',tag:'Переменные',badge:'Задача',title:'Действия с численными переменными',text:'Программа рассчитывает зарплату сотрудника. Что она напечатает?',mood:'day',lead:true},
+{id:'salaryChange',tag:'Переменные',badge:'Задача',title:'Изменение значений в расчетах',text:'Дневная ставка изменилась по ходу программы. Какой будет результат?',mood:'day',lead:true},
+{id:'practice1',tag:'Задание',badge:'Платформа',title:'Выполни задание №1 на платформе',text:'',mood:'day'},
+{id:'inputSec',tag:'Раздел',badge:'Ввод данных',title:'Ввод данных',text:'Учимся спрашивать данные у пользователя.',mood:'day',lead:true},
+{id:'inputDef',tag:'input()',badge:'Анатомия',title:'Функция input()',text:'Функция для ввода данных с клавиатуры. Нажимай на части строки!',mood:'day',lead:true},
+{id:'inputCollect',tag:'input()',badge:'Сбор данных',title:'Функция input(): Сбор данных',text:'Программа получает данные от пользователя и сохраняет каждое значение в отдельной переменной.',mood:'day',lead:true},
+{id:'inputError',tag:'input()',badge:'Ловушка',title:'Кажется, в программе ошибка!',text:'Догадаешься какая? Запусти код и посмотри на реакцию компьютера.',mood:'lab',lead:true},
+{id:'inputWhy',tag:'input()',badge:'Разбор',title:'Почему возникла ошибка?',text:'Результат работы input — строка, а не число.',mood:'day',lead:true},
+{id:'intStr',tag:'int() и str()',badge:'Преобразование',title:'Функции int() и str(): Преобразование типов',text:'int() превращает строку в целое число, str() — число в строку.',mood:'day',lead:true},
+{id:'intStrShort',tag:'int() и str()',badge:'Короче!',title:'Программу можно записать короче',text:'int(input(...)) — спросили и сразу превратили в число.',mood:'day',lead:true},
+{id:'turtleSec',tag:'Черепашка',badge:'Новые команды',title:'Черепашка: новые команды тренажёра',text:'Поднять перо, опустить перо и залить фигуру цветом — этому черепашка научилась в уроке 2!',mood:'day',lead:true},
+{id:'turtlePen',tag:'Черепашка',badge:'penup / pendown',title:'Поднять и отпустить перо',text:'penup() — двигаться без следа, pendown() — снова рисовать. Сравни варианты на холсте!',mood:'lab',lead:true},
+{id:'turtleFill',tag:'Черепашка',badge:'Заливка',title:'Заливка фигур: begin_fill() и end_fill()',text:'Нарисуй фигуру и залей её цветом, как в тренажёре урока 2.',mood:'lab',lead:true},
+{id:'turtleCheat',tag:'Черепашка',badge:'Шпаргалка',title:'Шпаргалка по новым командам',text:'Всё, что нужно для миссий тренажёра урока 2.',mood:'day',lead:true},
+{id:'practice2',tag:'Задание',badge:'Платформа',title:'Выполни задание №2 на платформе',text:'',mood:'day'},
+{id:'outro',tag:'Итоги',badge:'Рефлексия',title:'Завершение рабочего дня',text:'Подведём итоги урока 2.',mood:'night',lead:true}
+];
 /* ===== движок презентации ===== */
 let cur=0;
 const N=META.length,slideEl=$('#slide');
@@ -1173,37 +1199,6 @@ $('#thumbs').innerHTML=META.map((m,i)=>`<button class="thumb ${i===cur?'cur':''}
 $('#ovGrid').hidden=false;
 };
 $('#thumbs').addEventListener('click',e=>{const t=e.target.closest('.thumb');if(t){$('#ovGrid').hidden=true;goTo(+t.dataset.i);}});
-const META_DEF=[
-{id:'cover',tag:'Старт',badge:'Миссия №2',title:'Python Start: Урок 2. Переменные и Ввод данных',text:'На этом уроке мы углубимся в важные концепции Python: программы научатся взаимодействовать с пользователем и хранить информацию.',mood:'day',lead:true},
-{id:'platformTest',tag:'Задание',badge:'Платформа',title:'Выполни тест «Давай вспомним!» на платформе',text:'',mood:'day'},
-{id:'common1',tag:'Повторение',badge:'Вопрос',title:'Что общего у этих двух предметов?',text:'Подумай и нажми кнопку — проверим догадку!',mood:'day',lead:true},
-{id:'common2',tag:'Повторение',badge:'Вопрос',title:'Что общего у этих двух предметов?',text:'Вторая загадка: найди общее и открой ответ!',mood:'day',lead:true},
-{id:'today',tag:'План',badge:'3 миссии',title:'Сегодня на занятии',text:'Три миссии урока: хранение данных, ввод данных и практика на платформе.',mood:'day',lead:true},
-{id:'varsSec',tag:'Раздел',badge:'Переменные',title:'Переменные',text:'Узнаём, где компьютер хранит данные.',mood:'day',lead:true},
-{id:'varDef',tag:'Переменные',badge:'Определение',title:'Что такое переменная?',text:'Именованный элемент данных в памяти компьютера — контейнер для хранения значений.',mood:'day',lead:true},
-{id:'varSteps',tag:'Переменные',badge:'2 шага',title:'Задание переменной',text:'Чтобы использовать переменную, нужно выполнить два ключевых шага.',mood:'day',lead:true},
-{id:'varEx',tag:'Переменные',badge:'Пример',title:'Пример присваивания значений',text:'Создадим две переменные и выведем красивое сообщение.',mood:'day',lead:true},
-{id:'assignOp',tag:'Переменные',badge:'Анатомия',title:'Оператор присваивания',text:'Разберём строку score = 100 по частям. Нажимай на части кода!',mood:'day',lead:true},
-{id:'varChange',tag:'Переменные',badge:'Перезапись',title:'Изменение значения переменной',text:'Что будет, если присвоить значение ещё раз?',mood:'day',lead:true},
-{id:'types',tag:'Переменные',badge:'3 типа',title:'Типы данных',text:'Целые числа, десятичные дроби и строки — три главных типа.',mood:'day',lead:true},
-{id:'salaryQ',tag:'Переменные',badge:'Задача',title:'Действия с численными переменными',text:'Программа рассчитывает зарплату сотрудника. Что она напечатает?',mood:'day',lead:true},
-{id:'salaryChange',tag:'Переменные',badge:'Задача',title:'Изменение значений в расчётах',text:'Дневная ставка изменилась по ходу программы. Какой будет результат?',mood:'day',lead:true},
-{id:'practice1',tag:'Задание',badge:'Платформа',title:'Выполни задание №1 на платформе',text:'',mood:'day'},
-{id:'inputSec',tag:'Раздел',badge:'Ввод данных',title:'Ввод данных',text:'Учимся спрашивать данные у пользователя.',mood:'day',lead:true},
-{id:'inputDef',tag:'input()',badge:'Анатомия',title:'Функция input()',text:'Функция для ввода данных с клавиатуры. Нажимай на части строки!',mood:'day',lead:true},
-{id:'inputCollect',tag:'input()',badge:'Сбор данных',title:'Функция input(): Сбор данных',text:'Программа получает данные от пользователя и сохраняет каждое значение в отдельной переменной.',mood:'day',lead:true},
-{id:'inputError',tag:'input()',badge:'Ловушка',title:'Кажется, в программе ошибка!',text:'Догадаешься какая? Запусти код и посмотри на реакцию компьютера.',mood:'lab',lead:true},
-{id:'inputWhy',tag:'input()',badge:'Разбор',title:'Почему возникла ошибка?',text:'Результат работы input — строка, а не число.',mood:'day',lead:true},
-{id:'intStr',tag:'int() и str()',badge:'Преобразование',title:'Функции int() и str(): Преобразование типов',text:'int() превращает строку в целое число, str() — число в строку.',mood:'day',lead:true},
-{id:'intStrShort',tag:'int() и str()',badge:'Короче!',title:'Программу можно записать короче',text:'int(input(...)) — спросили и сразу превратили в число.',mood:'day',lead:true},
-{id:'turtleSec',tag:'Черепашка',badge:'Новые команды',title:'Черепашка: новые команды тренажёра',text:'Поднять перо, опустить перо и залить фигуру цветом — этому черепашка научилась в уроке 2!',mood:'day',lead:true},
-{id:'turtlePen',tag:'Черепашка',badge:'penup / pendown',title:'Поднять и отпустить перо',text:'penup() — двигаться без следа, pendown() — снова рисовать. Сравни варианты на холсте!',mood:'lab',lead:true},
-{id:'turtleFill',tag:'Черепашка',badge:'Заливка',title:'Заливка фигур: begin_fill() и end_fill()',text:'Нарисуй фигуру и залей её цветом, как в тренажёре урока 2.',mood:'lab',lead:true},
-{id:'turtleCheat',tag:'Черепашка',badge:'Шпаргалка',title:'Шпаргалка по новым командам',text:'Всё, что нужно для миссий тренажёра урока 2.',mood:'day',lead:true},
-{id:'practice2',tag:'Задание',badge:'Платформа',title:'Выполни задание №2 на платформе',text:'',mood:'day'},
-{id:'outro',tag:'Итоги',badge:'Рефлексия',title:'Завершение рабочего дня',text:'Подведём итоги урока 2.',mood:'night',lead:true}
-];
-var META=META_DEF;
 const hm=/^#s(\d+)$/.exec(location.hash);
 render(hm?(+hm[1]-1):0,false);
 </script>
